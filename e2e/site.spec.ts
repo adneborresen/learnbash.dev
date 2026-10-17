@@ -17,6 +17,17 @@ test("landing page lists the course and continues where you left off", async ({ 
   await expect(items.first()).toHaveClass(/solved/);
 });
 
+test("every page links icons that exist", async ({ page, request }) => {
+  for (const url of ["/", "/challenges/look-around/", "/licenses/"]) {
+    await page.goto(url);
+    const hrefs = await page.locator('link[rel="icon"], link[rel="apple-touch-icon"]').evaluateAll((links) =>
+      links.map((l) => l.getAttribute("href")!),
+    );
+    expect(hrefs).toEqual(["/favicon.svg", "/favicon.ico", "/apple-touch-icon.png"]);
+    for (const href of hrefs) expect((await request.get(href)).ok(), href).toBe(true);
+  }
+});
+
 test("licenses page lists the Linux packages and links to their source code", async ({ page }) => {
   await page.goto("/licenses/");
   await expect(page.locator("#alpine-version")).toHaveText(/^3\.\d+\.\d+$/);
