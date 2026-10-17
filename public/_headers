@@ -2,13 +2,18 @@
 # (scripts/vite-plugin-headers.ts), so the browser tests run with them.
 # Rules that match the same path are combined, so keep paths that set the
 # same header apart.
+#
+# The cloudflareinsights.com entries allow Cloudflare Web Analytics, which
+# Cloudflare inserts into the pages itself (a script plus where it reports to).
+# TODO-REVIEW: confirm in the browser console on the live site that it causes
+# no policy violations.
 
 /*
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
   X-Frame-Options: DENY
   Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval' https://static.cloudflareinsights.com; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self' https://cloudflareinsights.com; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
 
 # Hashed file names: safe to cache forever.
 /assets/*

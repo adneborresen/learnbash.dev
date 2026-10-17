@@ -9,6 +9,7 @@ import type { Connect, Plugin } from "vite";
 import type { ChallengeSummary, CompiledChallenge } from "../src/content/schema.ts";
 import { challengeIdFromPath, challengeUrl } from "../src/site/routes.ts";
 import { CHALLENGES_DIR, compileChallenge, loadChallenges } from "./lib/challenges.ts";
+import { withHeadTags } from "./vite-plugin-seo.ts";
 
 const ID = "virtual:challenges";
 const RESOLVED = "\0" + ID;
@@ -18,6 +19,16 @@ const PAGE = "challenge.html";
 
 const escapeHtml = (s: string) =>
   s.replace(/[&<>"]/g, (ch) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[ch]!);
+
+/** Replaces each pattern once; fails if challenge.html no longer contains one. */
+function fillIn(html: string, replacements: Array<[string | RegExp, string]>): string {
+  for (const [pattern, value] of replacements) {
+    const matched = typeof pattern === "string" ? html.includes(pattern) : pattern.test(html);
+    if (!matched) throw new Error(`${PAGE}: can't find ${String(pattern)}`);
+    html = html.replace(pattern, () => value); // a function: `$` in the value is literal
+  }
+  return html;
+}
 
 const rewriteChallengeUrls: Connect.NextHandleFunction = (req, _res, next) => {
   const pathname = (req.url ?? "").split("?")[0];
@@ -67,14 +78,25 @@ export function challengesPlugin(): Plugin {
       const template = path.join(outDir, PAGE);
       if (!fs.existsSync(template)) return;
       const html = fs.readFileSync(template, "utf8");
-      for (const c of loadChallenges().challenges) {
-        const page = html
-          .replace(/<title>[^<]*<\/title>/, `<title>${escapeHtml(c.meta.title)} · learnbash.dev</title>`)
-          .replace(
-            /<meta name="description" content="[^"]*">/,
-            `<meta name="description" content="${escapeHtml(`${c.meta.concept}. A Bash challenge in a real Linux terminal in your browser.`)}">`,
-          );
-        const file = path.join(outDir, challengeUrl(c.meta.id), "index.html");
+      for (const c of loadChallenges().challenges.map(compileChallenge)) {
+        // The story and goal are in the HTML itself (the page script renders
+        // the same again), so search engines and link previews see them.
+        // The explanation stays out: it's only shown once solved.
+        const page = withHeadTags(
+          fillIn(html, [
+            [/<title>[^<]*<\/title>/, `<title>${escapeHtml(c.title)} · learnbash.dev</title>`],
+            [
+              /<meta name="description" content="[^"]*">/,
+              `<meta name="description" content="${escapeHtml(`${c.concept}. A Bash challenge in a real Linux terminal in your browser.`)}">`,
+            ],
+            [`<p class="concept" id="concept"></p>`, `<p class="concept" id="concept">${escapeHtml(c.concept)}</p>`],
+            [`<h1 id="title">Loading…</h1>`, `<h1 id="title">${escapeHtml(c.title)}</h1>`],
+            [`<div class="prose" id="story"></div>`, `<div class="prose" id="story">${c.storyHtml}</div>`],
+            [`<div class="prose" id="goal"></div>`, `<div class="prose" id="goal">${c.goalHtml}</div>`],
+          ]),
+          challengeUrl(c.id),
+        );
+        const file = path.join(outDir, challengeUrl(c.id), "index.html");
         fs.mkdirSync(path.dirname(file), { recursive: true });
         fs.writeFileSync(file, page);
       }

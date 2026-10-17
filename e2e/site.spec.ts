@@ -44,6 +44,39 @@ test("licenses page lists the Linux packages and links to their source code", as
   }
 });
 
+test("challenge pages show their story without JavaScript (what search engines see)", async ({ browser }) => {
+  const context = await browser.newContext({ javaScriptEnabled: false });
+  const page = await context.newPage();
+  await page.goto("/challenges/top-visitor/");
+  await expect(page.getByRole("heading", { level: 1 })).toHaveText("Top visitor");
+  await expect(page.locator("#story")).not.toBeEmpty();
+  await expect(page.locator("#goal")).not.toBeEmpty();
+  await expect(page.locator("#explanation")).toBeEmpty(); // spoiler: only shown once solved
+  await context.close();
+});
+
+test("link previews, canonical URLs and the sitemap", async ({ page, request }) => {
+  const pages = { "/": "learnbash.dev: learn Bash", "/challenges/look-around/": "Look around", "/licenses/": "Licenses" };
+  for (const [url, title] of Object.entries(pages)) {
+    await page.goto(url);
+    const head = page.locator("head");
+    await expect(head.locator('link[rel="canonical"]')).toHaveAttribute("href", `https://learnbash.dev${url}`);
+    await expect(head.locator('meta[property="og:url"]')).toHaveAttribute("content", `https://learnbash.dev${url}`);
+    await expect(head.locator('meta[property="og:title"]')).toHaveAttribute("content", new RegExp(`^${title}`));
+    await expect(head.locator('meta[property="og:description"]')).toHaveAttribute("content", /\w/);
+    await expect(head.locator('meta[property="og:image"]')).toHaveAttribute("content", "https://learnbash.dev/og-image.png");
+  }
+  const image = await request.get("/og-image.png");
+  expect(image.headers()["content-type"]).toBe("image/png");
+
+  const sitemap = await (await request.get("/sitemap.xml")).text();
+  const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
+  expect(locs).toHaveLength(1 + 12 + 1);
+  expect(locs).toContain("https://learnbash.dev/challenges/permission-denied/");
+  for (const loc of locs) expect((await request.get(new URL(loc).pathname)).ok(), loc).toBe(true);
+  expect(await (await request.get("/robots.txt")).text()).toContain("Sitemap: https://learnbash.dev/sitemap.xml");
+});
+
 test("headers: security policy everywhere, long caching only for hashed files", async ({ page, request }) => {
   const res = (await page.goto("/challenges/look-around/"))!;
   expect(res.headers()["content-security-policy"]).toContain("script-src 'self' 'wasm-unsafe-eval'");
