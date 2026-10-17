@@ -1,0 +1,8 @@
+# BusyBox init configuration for the learnbash VM.
+::sysinit:/etc/learnbash-init
+# Learner's terminal (connected to xterm.js in the page).
+ttyS0::respawn:/usr/local/lib/learnbash/learner-shell
+# Guest agent (setup/check channel, invisible to the learner).
+ttyS1::respawn:/usr/local/lib/learnbash/agent
+::ctrlaltdel:/sbin/reboot
+::shutdown:/bin/umount -a -r

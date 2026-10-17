@@ -1,0 +1,21 @@
+{
+  "name": "learnbash",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "scripts": {
+    "build:image": "sh image/build.sh",
+    "spike:state": "node spike/build-state.mjs && mkdir -p spike/public && cp build/state/state.bin.zst spike/public/",
+    "spike:test": "node spike/check-test.mjs",
+    "spike:dev": "vite --config spike/vite.config.js"
+  },
+  "dependencies": {
+    "@xterm/xterm": "6.0.0",
+    "v86": "0.5.469"
+  },
+  "devDependencies": {
+    "typescript": "7.0.2",
+    "vite": "8.3.4"
+  }
+}

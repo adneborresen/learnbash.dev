@@ -1,0 +1,5 @@
+#!/bin/sh
+# Started by init on ttyS0. Logs the learner in without a password.
+stty sane 2>/dev/null
+cd /home/learner || exit 1
+exec /bin/login -f learner

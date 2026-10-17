@@ -1,0 +1,42 @@
+#!/bin/bash
+# Guest agent on ttyS1. Line protocol (all arguments base64-encoded):
+#   request:  LB1 <id> <CMD> [b64arg1] [b64arg2]
+#   response: @@LB1 <id> <exit-code> <b64-output>@@
+# Commands:
+#   PING                      -> "pong"
+#   SETTIME <epoch>           set the clock (snapshots restore a stale time)
+#   RUN <script> [answer]     run a bash script as root, ANSWER in env
+#   RESTART_SHELL             kill the learner session; init respawns it
+#   WINSIZE <rows> <cols>     tell the learner's terminal its size
+stty raw -echo 2>/dev/null
+work=/run/learnbash
+mkdir -p "$work" && chmod 700 "$work"
+
+b64d() { printf '%s' "$1" | base64 -d 2>/dev/null; }
+reply() {
+  printf '@@LB1 %s %s %s@@\n' "$1" "$2" "$(printf '%s' "$3" | base64 -w0)"
+}
+
+reply 0 0 ready
+while IFS= read -r line; do
+  line=${line%$'\r'}
+  read -r magic id cmd a1 a2 <<<"$line"
+  [[ $magic == LB1 && -n $id ]] || continue
+  case $cmd in
+    PING)
+      reply "$id" 0 pong ;;
+    SETTIME)
+      out=$(date -u -s "@$(b64d "$a1")" 2>&1); reply "$id" $? "$out" ;;
+    RUN)
+      b64d "$a1" > "$work/script.sh"
+      out=$(cd /root && ANSWER="$(b64d "$a2")" timeout 10 bash "$work/script.sh" 2>&1 </dev/null)
+      reply "$id" $? "$out" ;;
+    RESTART_SHELL)
+      pkill -KILL -t ttyS0; reply "$id" 0 "" ;;
+    WINSIZE)
+      out=$(stty -F /dev/ttyS0 rows "$(b64d "$a1")" cols "$(b64d "$a2")" 2>&1)
+      reply "$id" $? "$out" ;;
+    *)
+      reply "$id" 127 "unknown command: $cmd" ;;
+  esac
+done
