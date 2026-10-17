@@ -22,7 +22,7 @@ Create `~/report.txt` containing every line of `~/logs/app.log` that contains
 
 ## Hint 1
 
-Anything a command would print on the screen can be saved into a file instead. The
+The output a command would print on the screen can be saved into a file instead. The
 `>` character does that. To add something *without* replacing what's already in the
 file, there's a doubled version.
 

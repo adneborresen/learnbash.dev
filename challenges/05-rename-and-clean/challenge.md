@@ -22,7 +22,7 @@ In `~/reports`: rename `report_final_FINAL.txt` to `q3-report.txt` and delete
 
 ## Hint 1
 
-There's no separate "rename" command: renaming a file is *moving* it to a new name.
+You don't need a special "rename" command: renaming a file is *moving* it to a new name.
 Deleting is called *removing*.
 
 ## Hint 2
@@ -51,7 +51,7 @@ the new name; `mv -i` asks first.
 > ⚠️ **`rm` has no trash bin and no undo.** A deleted file is gone. Double-check the
 > name before pressing Enter, or use `rm -i`, which asks for each file.
 
-`rm` only deletes files. For directories:
+On its own, `rm` only deletes files. For directories:
 
 - `rmdir old` removes an **empty** directory.
 - `rm -r old` removes a directory **and everything inside it**. Be very careful

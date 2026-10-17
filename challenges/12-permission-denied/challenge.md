@@ -80,7 +80,7 @@ So `7` = `rwx`, `5` = `r-x`, `4` = `r--`:
 change your script, and the next time you run it, you'd run their code. When something
 says "Permission denied", give exactly the permission that's missing.
 
-**Why `./`?** When you type a command name, Bash only looks in the directories
+**Why `./`?** When you type a program's name, Bash looks for it in the directories
 listed in the `PATH` variable, not in the current directory. That way a file
 called `ls` lying in some folder can't take over the real `ls`. `./deploy.sh`
 says: "the file `deploy.sh` right here".

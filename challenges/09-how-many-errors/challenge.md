@@ -59,14 +59,15 @@ line: many small tools, each doing one job well, combined with pipes.
 | `-c` | bytes |
 
 Without a pipe, give it a file: `wc -l logs/app.log` prints the count and the file
-name (`500 logs/app.log`). Fed through a pipe, it prints only the number.
+name (`500 logs/app.log`). Reading from a pipe, there's no file name to show, so it
+prints only the number.
 
 **A shortcut:** `grep -c ERROR logs/app.log` counts the matching lines by itself.
 The pipe version is worth knowing because it works with *any* command's output.
 
 Watch out for two easy mistakes:
 
-- `grep -i error` also counts lines that say `error` in lowercase. In this log, the
+- `grep -i error` also matches lines that say `error` in lowercase. In this log, the
   `WARN` lines mention an "error rate", so you'd get too many.
 - `wc -w` counts **words**, not lines.
 

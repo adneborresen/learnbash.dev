@@ -60,6 +60,7 @@ before.
 **Tip:** press <kbd>Tab</kbd> while typing a path and Bash completes the name for
 you (`cd pro` + <kbd>Tab</kbd> → `cd projects/`). It saves time and avoids typos.
 
-`cd` does not print anything when it works. If the directory doesn't exist,
+`cd` normally prints nothing when it works (`cd -` is an exception: it prints where
+it took you). If the directory doesn't exist,
 you'll see an error such as `No such file or directory`, and you stay where you
 were.

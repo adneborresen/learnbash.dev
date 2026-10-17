@@ -22,8 +22,8 @@ You've just logged in to the company server. Time to look around.
 
 ## Goal
 
-Find the name of the only file (not a folder) in your home directory and type it
-into the answer box.
+Find the name of the only file (not a folder) you can see in your home directory and
+type it into the answer box.
 
 ## Hint 1
 
@@ -62,8 +62,8 @@ directories apart that work everywhere:
 - `ls -F` adds a `/` after every directory name.
 - `ls -l` shows a long listing; lines for directories start with `d`.
 
-`ls` only shows one directory: it does not look inside sub-folders. To see what's
-inside one, give its name: `ls projects`.
+On its own, `ls` shows the directory you're in; it does not look inside sub-folders.
+To see what's inside one, give its name: `ls projects`.
 
 Names starting with a dot (like `.bashrc`) are **hidden**: plain `ls` skips them.
 `ls -a` shows them too.

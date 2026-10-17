@@ -53,7 +53,12 @@ That double meaning is a classic trap. If `backup` doesn't exist yet,
 `cp config/nginx.conf backup` doesn't complain: it creates a **file** named
 `backup` that is a copy of nginx.conf. Writing the directory with a slash at the end,
 `backup/`, protects you: if the directory is missing, `cp` stops with an error
-instead. <!-- TODO-REVIEW: GNU cp with a trailing-slash destination that doesn't exist fails ("Not a directory") rather than creating a file. Verified on this VM; true for GNU coreutils generally? -->
+instead of creating a file.
+<!-- Reviewed: POSIX pathname resolution requires a trailing-slash path to name
+an existing directory or one being created as a directory:
+https://pubs.opengroup.org/onlinepubs/9799919799/basedefs/V1_chap04.html#tag_04_16
+Confirmed with GNU coreutils 9.7 in the bundled VM: a regular-file copy to a
+missing backup/ exits 1 without creating backup; cp -R can create the directory. -->
 
 Two more things to know:
 

@@ -34,18 +34,19 @@ search for it.
 
 ## Hint 3
 
-Run `less handbook.txt`, type `/Wi-Fi` and press <kbd>Enter</kbd>. The first match is
-the **old** network: press <kbd>n</kbd> to jump to the next match. Note the password,
-then press <kbd>q</kbd>.
+Run `less handbook.txt`, type `/Wi-Fi` and press <kbd>Enter</kbd>. The first matches are
+in the section about the **old** network: keep pressing <kbd>n</kbd> (next match) until
+you reach section 7. Note the password, then press <kbd>q</kbd>.
 
 ## Explanation
 
 **`cat`** prints a whole file to the terminal: `cat handbook.txt`. That's perfect for
-short files. For a long one, everything scrolls past and you only see the end.
+short files. For a long one, everything rushes past at once and you're left at the end.
 (The name comes from *concatenate*: `cat a.txt b.txt` prints both files, one after the
 other.)
 
-**`less`** opens a file in a viewer you can move around in. It never changes the file.
+**`less`** opens a file in a viewer you can move around in. Reading it with `less`
+doesn't change the file.
 
 | Key | Does |
 |---|---|
