@@ -2,11 +2,11 @@
 // Everything learner-facing is checked through the learner's real shell on
 // the terminal, so PATH, aliases and BusyBox shadowing are tested for real.
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
-import { startFromSnapshot, typeCommand, type NodeVm } from "../scripts/lib/node-vm.ts";
+import { startSession, typeCommand, type NodeSession } from "../scripts/lib/node-vm.ts";
 
-let node: NodeVm;
+let node: NodeSession;
 beforeAll(async () => {
-  node = await startFromSnapshot();
+  node = await startSession();
 });
 afterAll(async () => {
   await node?.destroy();
@@ -81,34 +81,34 @@ describe("learner session", () => {
 
 describe("guest agent", () => {
   test("answers PING", async () => {
-    expect(await node.agent.send("PING")).toEqual({ code: 0, out: "pong" });
+    expect(await node.session.agent.send("PING")).toEqual({ code: 0, out: "pong" });
   });
 
   test("runs scripts as root and reports their exit code and output", async () => {
-    const r = await node.agent.run(`id -un; echo oops >&2; exit 3`);
+    const r = await node.session.agent.run(`id -un; echo oops >&2; exit 3`);
     expect(r.code).toBe(3);
     expect(r.out).toBe("root\noops");
   });
 
   test("passes the learner's answer in $ANSWER, unchanged", async () => {
     const answer = `it's "tricky" $HOME *`;
-    const r = await node.agent.run(`printf '%s' "$ANSWER"`, answer);
+    const r = await node.session.agent.run(`printf '%s' "$ANSWER"`, answer);
     expect(r.out).toBe(answer);
   });
 
   test("rejects unknown commands", async () => {
-    expect((await node.agent.send("NOPE" as "PING")).code).toBe(127);
+    expect((await node.session.agent.send("NOPE" as "PING")).code).toBe(127);
   });
 
   test("learner_cwd reports the learner shell's current directory", async () => {
     await sh("cd /tmp");
-    const r = await node.agent.run(`. /usr/local/lib/learnbash/check-lib.sh; learner_cwd`);
+    const r = await node.session.agent.run(`. /usr/local/lib/learnbash/check-lib.sh; learner_cwd`);
     expect(r.out).toBe("/tmp");
     await sh("cd ~");
   });
 
   test("kills scripts that run longer than 10 seconds", async () => {
-    const r = await node.agent.run("sleep 30");
+    const r = await node.session.agent.run("sleep 30");
     expect(r.code).toBe(124); // exit code of `timeout`
   }, 30000);
 });

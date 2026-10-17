@@ -33,7 +33,7 @@ function fromBase64(b64: string): string {
 export class AgentClient {
   private buf = "";
   private nextId = 1;
-  private pending = new Map<number, (r: AgentResult) => void>();
+  private pending = new Map<number, (r: AgentResult | Error) => void>();
   private readyWaiters: Array<() => void> = [];
   private vm: SerialVm;
   private timeoutMs: number;
@@ -59,10 +59,22 @@ export class AgentClient {
       }, this.timeoutMs);
       this.pending.set(id, (r) => {
         clearTimeout(timer);
-        resolve(r);
+        if (r instanceof Error) reject(r);
+        else resolve(r);
       });
       this.vm.serial_send_bytes(1, encoder.encode(line));
     });
+  }
+
+  /**
+   * Fails every request still waiting for an answer. Called before the VM is
+   * restored from a snapshot: the restored guest never saw those requests.
+   */
+  cancelAll(reason: string): void {
+    const waiting = [...this.pending.values()];
+    this.pending.clear();
+    this.buf = "";
+    for (const settle of waiting) settle(new Error(reason));
   }
 
   /** Runs a bash script as root inside the VM; `answer` is exposed as $ANSWER. */

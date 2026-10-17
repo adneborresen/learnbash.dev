@@ -29,8 +29,11 @@ jobs:
       - name: Boot once and save the VM snapshot
         run: npm run build:state
 
-      - name: Environment tests (boot the snapshot, inspect the guest)
+      - name: Environment and engine tests (boot the snapshot, inspect the guest)
         run: npm test
+
+      - name: Build the website
+        run: npm run build
 
       - name: Upload VM artifacts
         if: always()

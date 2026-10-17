@@ -3,5 +3,5 @@ dist/
 build/
 *.log
 .DS_Store
-spike/public/
 .playwright-mcp/
+public/vm/

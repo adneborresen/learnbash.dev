@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Engine playground</title>
+  <style>
+    :root { color-scheme: dark; --bg: #121417; --fg: #e8e8e8; --muted: #9aa0a6; --ok: #6fdc8c; --bad: #ff9b73; }
+    * { box-sizing: border-box; }
+    body { margin: 0; font: 16px/1.5 system-ui, sans-serif; background: var(--bg); color: var(--fg); }
+    main { max-width: 980px; margin: 0 auto; padding: 16px; }
+    h1 { font-size: 1.2rem; margin: 0 0 12px; }
+    #term { height: min(60vh, 460px); background: #0b0d10; padding: 6px; border-radius: 6px; }
+    #keys { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+    #keys button { min-width: 40px; min-height: 36px; padding: 4px 8px; font: 14px ui-monospace, monospace;
+      background: #23272e; color: var(--fg); border: 1px solid #343a43; border-radius: 6px; }
+    .actions { display: flex; gap: 8px; margin-top: 12px; }
+    .actions button { font: inherit; padding: 8px 16px; border-radius: 6px; border: 0; background: #3b6fd8; color: #fff; }
+    .actions button[disabled] { opacity: .5; }
+    #status { margin-top: 10px; min-height: 1.5em; }
+    .pass { color: var(--ok); } .fail { color: var(--bad); }
+    progress { width: 100%; height: 6px; }
+    pre { color: var(--muted); font-size: 12px; white-space: pre-wrap; }
+    @media (min-width: 900px) { #keys { display: none; } }
+  </style>
+</head>
+<body>
+<main>
+  <h1>Engine playground: create <code>~/hello.txt</code> containing <code>hi</code></h1>
+  <progress id="progress" max="1" value="0"></progress>
+  <div id="term"></div>
+  <div id="keys"></div>
+  <div class="actions">
+    <button id="check" disabled>Check</button>
+    <button id="reset" disabled>Reset</button>
+  </div>
+  <div id="status" role="status">Loading the Linux machine…</div>
+  <pre id="timings"></pre>
+</main>
+<script type="module" src="../src/dev/engine-demo.ts"></script>
+</body>
+</html>
