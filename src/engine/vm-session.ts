@@ -88,11 +88,14 @@ export class VmSession {
       const t2 = performance.now();
       for (const listener of this.resetListeners) listener();
 
-      const steps = [this.agent.send("SETTIME", Math.floor(Date.now() / 1000))];
-      if (options.rows && options.cols) steps.push(this.agent.send("WINSIZE", options.rows, options.cols));
-      const setup = this.agent.run(options.setup ?? "true");
-      await Promise.all(steps);
-      const result = await setup;
+      // Clock, terminal size and setup in a single round trip to the agent.
+      const result = await this.agent.send(
+        "START",
+        Math.floor(Date.now() / 1000),
+        options.rows ?? 24,
+        options.cols ?? 80,
+        options.setup ?? "true",
+      );
       this.lastStartTimings = {
         decompressMs: Math.round(t1 - t0),
         restoreMs: Math.round(t2 - t1),

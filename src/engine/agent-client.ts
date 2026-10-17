@@ -14,11 +14,12 @@ export interface AgentResult {
   out: string;
 }
 
-export type AgentCommand = "PING" | "SETTIME" | "RUN" | "RESTART_SHELL" | "WINSIZE";
+export type AgentCommand = "PING" | "SETTIME" | "WINSIZE" | "RUN" | "START" | "RESTART_SHELL";
 
 const encoder = new TextEncoder();
 const decoder = new TextDecoder();
 const RESPONSE = /@@LB1 (\d+) (\d+) ([A-Za-z0-9+/=]*)@@\n/;
+const TRAILING_NEWLINES = /\n+$/;
 
 function toBase64(text: string): string {
   let bin = "";
@@ -89,7 +90,8 @@ export class AgentClient {
     while ((m = RESPONSE.exec(this.buf))) {
       this.buf = this.buf.slice(m.index + m[0].length);
       const id = Number(m[1]);
-      const result = { code: Number(m[2]), out: fromBase64(m[3]) };
+      // Trailing newlines are dropped, like a shell's $(...) would.
+      const result = { code: Number(m[2]), out: fromBase64(m[3]).replace(TRAILING_NEWLINES, "") };
       if (id === 0) this.readyWaiters.splice(0).forEach((w) => w());
       this.pending.get(id)?.(result);
       this.pending.delete(id);

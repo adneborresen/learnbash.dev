@@ -1,42 +1,69 @@
 #!/bin/bash
 # Guest agent on ttyS1. Line protocol (all arguments base64-encoded):
-#   request:  LB1 <id> <CMD> [b64arg1] [b64arg2]
+#   request:  LB1 <id> <CMD> [b64arg...]
 #   response: @@LB1 <id> <exit-code> <b64-output>@@
 # Commands:
-#   PING                      -> "pong"
-#   SETTIME <epoch>           set the clock (snapshots restore a stale time)
-#   RUN <script> [answer]     run a bash script as root, ANSWER in env
-#   RESTART_SHELL             kill the learner session; init respawns it
-#   WINSIZE <rows> <cols>     tell the learner's terminal its size
+#   PING                              -> "pong"
+#   SETTIME <epoch>                   set the clock (snapshots restore a stale time)
+#   WINSIZE <rows> <cols>             tell the learner's terminal its size
+#   RUN <script> [answer]             run a bash script as root, ANSWER in env
+#   START <epoch> <rows> <cols> <setup>
+#                                     SETTIME + WINSIZE + RUN in one round trip
+#   RESTART_SHELL                     kill the learner session; init respawns it
+#
+# Every process started costs noticeable time under emulation, so this script
+# avoids command substitutions and pipes on the hot path.
 stty raw -echo 2>/dev/null
 work=/run/learnbash
 mkdir -p "$work" && chmod 700 "$work"
+out=$work/out
 
-b64d() { printf '%s' "$1" | base64 -d 2>/dev/null; }
+# reply <id> <code>: sends the contents of $out (trailing newlines dropped by
+# the client, like $(...) would).
 reply() {
-  printf '@@LB1 %s %s %s@@\n' "$1" "$2" "$(printf '%s' "$3" | base64 -w0)"
+  printf '@@LB1 %s %s ' "$1" "$2"
+  base64 -w0 "$out"
+  printf '@@\n'
+}
+reply_text() {
+  printf '%s' "$3" > "$out"
+  reply "$1" "$2"
 }
 
-reply 0 0 ready
+# run_script <b64-script> [b64-answer]: runs the script, output to $out.
+run_script() {
+  base64 -d <<<"$1" > "$work/script.sh"
+  local answer=""
+  [[ -n ${2-} ]] && answer=$(base64 -d <<<"$2")
+  (cd /root && ANSWER="$answer" exec timeout 10 bash "$work/script.sh") > "$out" 2>&1 </dev/null
+}
+
+set_time() { date -u -s "@$(base64 -d <<<"$1")" > /dev/null; }
+set_winsize() { stty -F /dev/ttyS0 rows "$(base64 -d <<<"$1")" cols "$(base64 -d <<<"$2")"; }
+
+reply_text 0 0 ready
 while IFS= read -r line; do
   line=${line%$'\r'}
-  read -r magic id cmd a1 a2 <<<"$line"
+  read -r magic id cmd a1 a2 a3 a4 <<<"$line"
   [[ $magic == LB1 && -n $id ]] || continue
   case $cmd in
     PING)
-      reply "$id" 0 pong ;;
+      reply_text "$id" 0 pong ;;
     SETTIME)
-      out=$(date -u -s "@$(b64d "$a1")" 2>&1); reply "$id" $? "$out" ;;
-    RUN)
-      b64d "$a1" > "$work/script.sh"
-      out=$(cd /root && ANSWER="$(b64d "$a2")" timeout 10 bash "$work/script.sh" 2>&1 </dev/null)
-      reply "$id" $? "$out" ;;
-    RESTART_SHELL)
-      pkill -KILL -t ttyS0; reply "$id" 0 "" ;;
+      set_time "$a1" > "$out" 2>&1; reply "$id" $? ;;
     WINSIZE)
-      out=$(stty -F /dev/ttyS0 rows "$(b64d "$a1")" cols "$(b64d "$a2")" 2>&1)
-      reply "$id" $? "$out" ;;
+      set_winsize "$a1" "$a2" > "$out" 2>&1; reply "$id" $? ;;
+    RUN)
+      run_script "$a1" "$a2"; reply "$id" $? ;;
+    START)
+      if ! set_time "$a1" > "$out" 2>&1 || ! set_winsize "$a2" "$a3" >> "$out" 2>&1; then
+        reply "$id" 125
+        continue
+      fi
+      run_script "$a4"; reply "$id" $? ;;
+    RESTART_SHELL)
+      pkill -KILL -t ttyS0; reply_text "$id" 0 "" ;;
     *)
-      reply "$id" 127 "unknown command: $cmd" ;;
+      reply_text "$id" 127 "unknown command: $cmd" ;;
   esac
 done
