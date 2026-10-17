@@ -1,0 +1,43 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  vm:
+    name: Build VM image and test it
+    runs-on: ubuntu-24.04
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+
+      - run: npm ci
+      - run: npm run typecheck
+      - run: npm run lint
+
+      # 32-bit x86 containers run natively on the x86-64 runner (no emulation).
+      - name: Build kernel + initramfs
+        run: npm run build:image
+
+      - name: Boot once and save the VM snapshot
+        run: npm run build:state
+
+      - name: Environment tests (boot the snapshot, inspect the guest)
+        run: npm test
+
+      - name: Upload VM artifacts
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: vm-${{ github.sha }}
+          path: |
+            build/image/
+            build/state/
+          if-no-files-found: ignore

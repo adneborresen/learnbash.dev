@@ -1,0 +1,4 @@
+{
+  "memoryMB": 128,
+  "cmdline": "console=ttyS0 quiet tsc=reliable mitigations=off random.trust_cpu=on init_on_free=1"
+}

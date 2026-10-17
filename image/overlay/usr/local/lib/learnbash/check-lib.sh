@@ -1,6 +1,7 @@
+# shellcheck shell=bash
 # Helpers for challenge checkers. Source with:
 #   . /usr/local/lib/learnbash/check-lib.sh
-LEARNER_HOME=/home/learner
+export LEARNER_HOME=/home/learner
 
 pass() { echo "${1:-Correct!}"; exit 0; }
 fail() { echo "$1"; exit 1; }

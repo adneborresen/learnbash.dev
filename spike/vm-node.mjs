@@ -14,8 +14,8 @@ export const MEMORY_MB = Number(process.env.MEMORY_MB ?? 128);
 export function createVm({ boot = true } = {}) {
   const opts = {
     wasm_path: path.join(root, "node_modules/v86/build/v86.wasm"),
-    bios: img(path.join(here, "assets/seabios.bin")),
-    vga_bios: img(path.join(here, "assets/vgabios.bin")),
+    bios: img(path.join(root, "image/bios/seabios.bin")),
+    vga_bios: img(path.join(root, "image/bios/vgabios.bin")),
     memory_size: MEMORY_MB * 1024 * 1024,
     uart1: true,
     autostart: true,

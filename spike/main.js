@@ -2,8 +2,8 @@ import "@xterm/xterm/css/xterm.css";
 import { Terminal } from "@xterm/xterm";
 import { V86 } from "v86";
 import wasmUrl from "v86/build/v86.wasm?url";
-import biosUrl from "./assets/seabios.bin?url";
-import vgaUrl from "./assets/vgabios.bin?url";
+import biosUrl from "../image/bios/seabios.bin?url";
+import vgaUrl from "../image/bios/vgabios.bin?url";
 import { AgentClient } from "./agent-client.js";
 
 const SETUP = `rm -f /home/learner/hello.txt`;

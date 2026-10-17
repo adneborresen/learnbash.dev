@@ -3,19 +3,24 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "license": "MIT",
+  "license": "UNLICENSED",
   "scripts": {
     "build:image": "sh image/build.sh",
-    "spike:state": "node spike/build-state.mjs && mkdir -p spike/public && cp build/state/state.bin.zst spike/public/",
-    "spike:test": "node spike/check-test.mjs",
-    "spike:dev": "vite --config spike/vite.config.js"
+    "build:state": "node scripts/build-state.ts",
+    "build:vm": "npm run build:image && npm run build:state",
+    "test": "vitest run",
+    "typecheck": "tsc -p tsconfig.json",
+    "spike:dev": "mkdir -p spike/public && cp build/state/state.bin.zst spike/public/ && vite --config spike/vite.config.js",
+    "lint": "sh scripts/shellcheck.sh"
   },
   "dependencies": {
     "@xterm/xterm": "6.0.0",
     "v86": "0.5.469"
   },
   "devDependencies": {
+    "@types/node": "24.9.1",
     "typescript": "7.0.2",
-    "vite": "8.3.4"
+    "vite": "8.3.4",
+    "vitest": "5.0.3"
   }
 }
