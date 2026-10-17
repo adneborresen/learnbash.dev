@@ -21,6 +21,7 @@ RUN adduser -D -s /bin/bash -h /home/learner learner \
  && passwd -d learner >/dev/null \
  && echo learnbash > /etc/hostname
 COPY overlay/ /
+RUN chown -R learner:learner /home/learner
 RUN chmod 755 /usr/local/lib/learnbash/* /etc/learnbash-init \
  && chmod 700 /root \
  && mkdir /out \

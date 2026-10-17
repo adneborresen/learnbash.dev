@@ -66,6 +66,19 @@ describe("learner session", () => {
     expect(output).toMatch(/terminfo\/x\/xterm-256color/);
   });
 
+  test("Tab completes directory names (lessons recommend it)", async () => {
+    // Tab is pressed in the middle of the line; Bash completes the path.
+    const { output } = await sh("cd /usr/lo\t && pwd");
+    expect(output).toContain("/usr/local\r\n");
+    await sh("cd ~");
+  });
+
+  test("ls and grep use colours, like on Ubuntu", async () => {
+    const { output } = await sh("alias ls grep");
+    expect(output).toContain("alias ls='ls --color=auto'");
+    expect(output).toContain("alias grep='grep --color=auto'");
+  });
+
   test("clock is set from the host after restoring the snapshot", async () => {
     const { output } = await sh(`date -u +year=%Y`);
     expect(output).toContain(`year=${new Date().getUTCFullYear()}`);

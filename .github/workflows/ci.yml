@@ -21,6 +21,7 @@ jobs:
       - run: npm ci
       - run: npm run typecheck
       - run: npm run lint
+      - run: npm run check:content
 
       # 32-bit x86 containers run natively on the x86-64 runner (no emulation).
       - name: Build kernel + initramfs
@@ -29,7 +30,7 @@ jobs:
       - name: Boot once and save the VM snapshot
         run: npm run build:state
 
-      - name: Environment and engine tests (boot the snapshot, inspect the guest)
+      - name: Environment, engine and challenge tests (in the real VM)
         run: npm test
 
       - name: Build the website

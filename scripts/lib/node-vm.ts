@@ -1,12 +1,12 @@
 // Runs the learnbash VM headlessly in Node (build scripts and tests).
 import fs from "node:fs";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
 import { V86 } from "v86";
 import { AgentClient } from "../../src/engine/agent-client.ts";
 import { VmSession, type StartOptions, type V86Like } from "../../src/engine/vm-session.ts";
+import { ROOT } from "./paths.ts";
 
-export const ROOT = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "../..");
+export { ROOT };
 export const IMAGE_DIR = path.join(ROOT, "build/image");
 export const STATE_DIR = path.join(ROOT, "build/state");
 export const STATE_FILE = path.join(STATE_DIR, "state.bin.zst");
@@ -118,10 +118,19 @@ export async function startSession(options: StartOptions = {}): Promise<NodeSess
   return node;
 }
 
+/** Removes terminal control sequences (colours, cursor movement, titles). */
+export function stripAnsi(text: string): string {
+  return text
+    .replace(/\x1b\][^\x07\x1b]*(\x07|\x1b\\)/g, "")
+    .replace(/\x1b\[[0-9;?]*[ -/]*[@-~]/g, "")
+    .replace(/\x1b[()][0-9A-Za-z]/g, "");
+}
+
 let sentinel = 0;
 /**
  * Types a command line into the learner's shell, waits until it has finished
- * and returns what the terminal printed plus the command's exit code.
+ * and returns what the terminal printed (without colour codes) plus the
+ * command's exit code.
  * (A command that reads from the keyboard would swallow the marker line.)
  */
 export async function typeCommand(
@@ -138,6 +147,6 @@ export async function typeCommand(
   node.session.sendInput(
     "__lb_rc=$?; __lb_m=__LB_DONE_" + id + '; echo "${__lb_m}__:${__lb_rc}"\n',
   );
-  const output = await done;
+  const output = stripAnsi(await done);
   return { output, exitCode: Number(pattern.exec(output)![1]) };
 }

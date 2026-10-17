@@ -3,7 +3,8 @@
 Learn Bash by solving small challenges in a real Linux system that runs entirely in your
 browser (the [v86](https://github.com/copy/v86) x86 emulator + a tiny Alpine Linux with GNU tools).
 
-Status: early development (milestone M2: engine — VM session, terminal, check/reset).
+Status: early development (milestone M3: challenge format + test harness). To add a challenge, see
+[docs/authoring.md](docs/authoring.md).
 
 ## Requirements
 
@@ -15,7 +16,9 @@ Status: early development (milestone M2: engine — VM session, terminal, check/
 ```sh
 npm ci
 npm run build:vm    # build kernel + root filesystem, boot once, save the VM snapshot
-npm test            # boot the snapshot and verify the environment (GNU tools, agent, ...)
+npm test            # boot the snapshot: environment, engine and every challenge
+npm run check:content  # validate challenge files
+npm run todo-review    # list statements marked for expert review
 npm run lint        # shellcheck all guest scripts
 npm run typecheck
 npm run dev         # engine playground at http://localhost:5173/dev/engine.html
@@ -38,4 +41,6 @@ Build outputs land in `build/`: `build/image/` (kernel, initramfs, `packages.txt
 - `dev/` – developer pages (engine playground).
 - `docs/spike-results.md` – measurements from the M0 prototype.
 - `scripts/` – build scripts and the Node VM harness.
-- `tests/` – tests that run against the real VM snapshot.
+- `challenges/` – the course content, one folder per challenge (see docs/authoring.md).
+- `tests/` – tests that run against the real VM snapshot, including every challenge's
+  solution and wrong attempts.
