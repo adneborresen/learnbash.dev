@@ -36,6 +36,20 @@ jobs:
       - name: Build the website
         run: npm run build
 
+      - name: Install browsers for end-to-end tests
+        run: npx playwright install --with-deps chromium firefox webkit
+
+      - name: End-to-end tests (Chromium, Firefox, WebKit)
+        run: npx playwright test
+
+      - name: Upload end-to-end report
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: playwright-report-${{ github.sha }}
+          path: playwright-report/
+          if-no-files-found: ignore
+
       - name: Upload VM artifacts
         if: always()
         uses: actions/upload-artifact@v7

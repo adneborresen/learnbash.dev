@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, interactive-widget=resizes-content">
+  <title>Challenge · learnbash.dev</title>
+  <meta name="description" content="Learn Bash by solving challenges in a real Linux terminal, right in your browser.">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">learnbash<span>.dev</span></a>
+  <nav aria-label="Challenges">
+    <a id="prev" href="/" hidden>← Previous</a>
+    <span id="position"></span>
+    <a id="next" href="/" hidden>Next →</a>
+  </nav>
+</header>
+
+<main class="challenge" id="page">
+  <section class="intro" aria-labelledby="title">
+    <p class="concept" id="concept"></p>
+    <h1 id="title">Loading…</h1>
+    <div class="prose" id="story"></div>
+    <div class="goal">
+      <h2>Your goal</h2>
+      <div class="prose" id="goal"></div>
+    </div>
+  </section>
+
+  <section class="workspace" aria-label="Linux terminal">
+    <div class="term-frame">
+      <div id="term"></div>
+      <div class="loading" id="loading" role="status">
+        <p id="loading-text">Starting Linux…</p>
+        <progress id="loading-progress" max="1"></progress>
+        <button type="button" id="retry" hidden>Try again</button>
+      </div>
+    </div>
+    <div class="keys" id="keys"></div>
+  </section>
+
+  <form class="controls" id="check-form" novalidate>
+    <div class="answer" id="answer-row" hidden>
+      <label for="answer" id="answer-label">Answer</label>
+      <input id="answer" name="answer" type="text" autocomplete="off" autocapitalize="off" autocorrect="off" spellcheck="false">
+    </div>
+    <div class="buttons">
+      <button type="submit" class="primary" id="check" disabled>Check</button>
+      <button type="button" id="reset" disabled>Reset</button>
+    </div>
+    <p class="feedback" id="feedback" role="status" aria-live="polite"></p>
+  </form>
+
+  <section class="solved" id="solved" aria-labelledby="solved-title" hidden>
+    <h2 id="solved-title">✔ Solved</h2>
+    <details id="explanation-box">
+      <summary>What you learned</summary>
+      <div class="prose" id="explanation"></div>
+    </details>
+    <a class="button primary" id="solved-next" href="/">Next challenge →</a>
+  </section>
+
+  <section class="hints" aria-labelledby="hints-title">
+    <h2 id="hints-title">Stuck?</h2>
+    <ol id="hint-list"></ol>
+    <button type="button" id="hint-button">Show a hint</button>
+  </section>
+</main>
+
+<main class="not-found" id="not-found" hidden>
+  <h1>Challenge not found</h1>
+  <p>This challenge doesn't exist (any more). <a href="/">See all challenges</a>.</p>
+</main>
+
+<script type="module" src="/src/pages/challenge.ts"></script>
+</body>
+</html>

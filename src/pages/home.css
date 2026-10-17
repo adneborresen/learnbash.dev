@@ -1,0 +1,9 @@
+.home { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
+.home h1 { font-size: 1.9rem; line-height: 1.2; margin: 8px 0 10px; }
+.lead { color: var(--muted); font-size: 1.1rem; margin: 0 0 20px; }
+.progress-summary { font-weight: 600; }
+.challenge-list { padding-left: 1.6em; }
+.challenge-list li { padding: 10px 0; border-bottom: 1px solid var(--border); }
+.challenge-list a { font-weight: 600; font-size: 1.05rem; }
+.challenge-list .concept { display: block; color: var(--muted); font-size: 0.92rem; }
+.challenge-list .mark { color: var(--ok); font-size: 0.9rem; font-weight: 600; }

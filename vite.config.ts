@@ -6,8 +6,10 @@ export default defineConfig({
   plugins: [challengesPlugin()],
   build: {
     rollupOptions: {
+      // dev/engine.html (the engine playground) is dev-only and not built.
       input: {
-        engine: resolve(import.meta.dirname, "dev/engine.html"),
+        home: resolve(import.meta.dirname, "index.html"),
+        challenge: resolve(import.meta.dirname, "challenge.html"),
       },
     },
   },

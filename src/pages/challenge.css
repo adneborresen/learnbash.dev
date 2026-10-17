@@ -1,0 +1,70 @@
+/* Challenge page. Phones: one column (text, terminal, Check, hints).
+   Wide screens: text on the left, terminal on the right. */
+.challenge {
+  display: grid;
+  gap: 16px;
+  padding: 16px;
+  max-width: 1400px;
+  margin: 0 auto;
+  grid-template-columns: minmax(0, 1fr);
+  grid-template-areas: "intro" "work" "controls" "solved" "hints";
+}
+.intro { grid-area: intro; }
+.workspace { grid-area: work; min-width: 0; }
+.controls { grid-area: controls; }
+.solved { grid-area: solved; }
+.hints { grid-area: hints; }
+
+.concept { margin: 0; color: var(--muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 0.04em; }
+.intro h1 { margin: 2px 0 10px; font-size: 1.6rem; line-height: 1.25; }
+.goal { margin-top: 14px; padding: 12px 14px; border-left: 4px solid var(--accent); background: var(--surface); border-radius: 0 var(--radius) var(--radius) 0; }
+.goal h2, .hints h2 { margin: 0 0 4px; font-size: 0.95rem; }
+
+.term-frame { position: relative; background: var(--term-bg); border-radius: var(--radius); padding: 6px; }
+#term { height: max(260px, 52vh); }
+.loading {
+  position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center;
+  gap: 10px; padding: 16px; text-align: center; color: #e8e8e6; background: var(--term-bg); border-radius: var(--radius);
+}
+.loading p { margin: 0; }
+.loading progress { width: min(280px, 80%); height: 6px; }
+
+/* One row that scrolls sideways, so it doesn't push the page down. */
+.keys { display: flex; gap: 6px; margin-top: 8px; overflow-x: auto; padding-bottom: 4px; scrollbar-width: thin; }
+.keys button { flex: none; min-width: 42px; min-height: 40px; padding: 4px 8px; font: 14px var(--mono); }
+@media (hover: hover) and (pointer: fine) { .keys { display: none; } }
+
+.answer { display: flex; flex-direction: column; gap: 4px; margin-bottom: 10px; }
+.answer label { font-weight: 600; font-size: 0.95rem; }
+.answer input {
+  font: 16px var(--mono); padding: 8px 10px; min-height: 42px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+.buttons { display: flex; flex-wrap: wrap; gap: 8px; }
+.feedback { margin: 10px 0 0; min-height: 1.5em; }
+.feedback:empty { display: none; }
+.feedback.pass, .feedback.fail { padding: 8px 12px; border-radius: var(--radius); }
+.feedback.pass { color: var(--ok); background: var(--ok-bg); }
+.feedback.fail { color: var(--bad); background: var(--bad-bg); }
+
+.solved { padding: 14px; border: 1px solid var(--ok); border-radius: var(--radius); background: var(--surface); }
+.solved h2 { margin: 0 0 8px; color: var(--ok); font-size: 1.1rem; }
+.solved details { margin-bottom: 12px; }
+.solved summary { cursor: pointer; font-weight: 600; }
+.solved .prose { margin-top: 8px; }
+
+.hints ol { margin: 6px 0 10px; padding-left: 1.4em; }
+.hints li { margin-bottom: 8px; }
+
+.not-found { max-width: 640px; margin: 40px auto; padding: 0 16px; }
+
+@media (min-width: 900px) {
+  .challenge {
+    grid-template-columns: minmax(320px, 2fr) minmax(0, 3fr);
+    grid-template-rows: auto auto auto 1fr;
+    grid-template-areas: "intro work" "controls work" "solved work" "hints work";
+    column-gap: 24px;
+  }
+  .workspace { position: sticky; top: 16px; align-self: start; }
+  #term { height: calc(100vh - 110px); max-height: 760px; }
+}

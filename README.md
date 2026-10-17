@@ -3,7 +3,7 @@
 Learn Bash by solving small challenges in a real Linux system that runs entirely in your
 browser (the [v86](https://github.com/copy/v86) x86 emulator + a tiny Alpine Linux with GNU tools).
 
-Status: early development (milestone M3: challenge format + test harness). To add a challenge, see
+Status: early development (milestone M4: challenge page). To add a challenge, see
 [docs/authoring.md](docs/authoring.md).
 
 ## Requirements
@@ -21,8 +21,10 @@ npm run check:content  # validate challenge files
 npm run todo-review    # list statements marked for expert review
 npm run lint        # shellcheck all guest scripts
 npm run typecheck
-npm run dev         # engine playground at http://localhost:5173/dev/engine.html
+npm run dev         # site at http://localhost:5173/ (engine playground: /dev/engine.html)
 npm run build       # production build into dist/
+npm run test:e2e    # build, then play challenges in Chromium, Firefox and WebKit
+                    # (first time: npx playwright install chromium firefox webkit)
 ```
 
 Build outputs land in `build/`: `build/image/` (kernel, initramfs, `packages.txt`) and
@@ -38,9 +40,12 @@ Build outputs land in `build/`: `build/image/` (kernel, initramfs, `packages.txt
 - `src/engine/` – the engine: `vm-session.ts` (restore/setup/check/reset, shared by the website and
   the Node tests), `browser-vm.ts` (lazy-loads v86 + the snapshot), `terminal-view.ts` (xterm.js +
   mobile key bar), `agent-client.ts` (guest agent protocol).
+- `index.html`, `challenge.html`, `src/pages/` – the pages. The build writes one
+  `challenges/<id>/index.html` per challenge from `challenge.html`.
+- `src/site/` – shared styles, URLs and progress (saved in the browser's localStorage).
 - `dev/` – developer pages (engine playground).
 - `docs/spike-results.md` – measurements from the M0 prototype.
 - `scripts/` – build scripts and the Node VM harness.
 - `challenges/` – the course content, one folder per challenge (see docs/authoring.md).
 - `tests/` – tests that run against the real VM snapshot, including every challenge's
-  solution and wrong attempts.
+  solution and wrong attempts. `e2e/` – browser tests of the built site (Playwright).
