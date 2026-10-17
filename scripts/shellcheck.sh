@@ -22,9 +22,12 @@ run() {
 }
 # shellcheck disable=SC2086 # word splitting of the file lists is intended
 run $image_files
+# SC2088: messages for learners show paths as "~/..." on purpose, like the prompt.
 # shellcheck disable=SC2086
-[ -z "$challenge_scripts" ] || run --shell=bash --exclude=SC1091 $challenge_scripts
+[ -z "$challenge_scripts" ] || run --shell=bash --exclude=SC1091,SC2088 $challenge_scripts
+# Typed commands are what learners type, not scripts: skip style advice (e.g. "use grep -c
+# instead of grep | wc -l", which is the lesson of a challenge), keep warnings and errors.
 # shellcheck disable=SC2086
-[ -z "$typed_files" ] || run --shell=bash --exclude=SC1091,SC2164,SC2103 $typed_files
+[ -z "$typed_files" ] || run --shell=bash --severity=warning --exclude=SC1091,SC2164,SC2103 $typed_files
 count() { echo "$1" | grep -c . || true; }
 echo "shellcheck OK: $(count "$image_files") image, $(count "$challenge_scripts") challenge, $(count "$typed_files") typed-command files"

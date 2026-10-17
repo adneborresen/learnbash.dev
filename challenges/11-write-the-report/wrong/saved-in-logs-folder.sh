@@ -1,0 +1,3 @@
+cd logs
+grep ERROR app.log > report.txt
+echo "END OF REPORT" >> report.txt
