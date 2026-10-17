@@ -59,3 +59,91 @@ jobs:
             build/image/
             build/state/
           if-no-files-found: ignore
+
+      # Exactly what was tested is what gets deployed.
+      - name: Upload the built website
+        uses: actions/upload-artifact@v7
+        with:
+          name: site-${{ github.sha }}
+          path: dist/
+          include-hidden-files: true
+          if-no-files-found: error
+
+  # The GPL requires the source code of the Linux image we serve. Each image's
+  # source archive is published as a GitHub release named after its package
+  # list (the licenses page links to it), before that image can be deployed.
+  sources:
+    name: Publish the image's source code
+    needs: vm
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 60
+    permissions:
+      contents: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 24
+
+      - uses: actions/download-artifact@v8
+        with:
+          name: vm-${{ github.sha }}
+          path: build/
+
+      - name: Find the release tag for this image
+        id: tag
+        run: |
+          tag=$(node scripts/lib/image-sources.ts tag)
+          echo "tag=$tag" >> "$GITHUB_OUTPUT"
+          if gh release view "$tag" >/dev/null 2>&1; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+            echo "$tag is already published"
+          fi
+
+      - name: Collect the source code
+        if: steps.tag.outputs.exists != 'true'
+        run: sh scripts/collect-sources.sh
+
+      - name: Publish the release
+        if: steps.tag.outputs.exists != 'true'
+        run: |
+          tag=${{ steps.tag.outputs.tag }}
+          gh release create "$tag" "build/sources/$tag.tar" "build/image/packages.tsv" \
+            --title "Source code of the VM image ($tag)" \
+            --notes "Complete corresponding source code of every package in the learnbash.dev Linux image built from commit ${{ github.sha }}. See README.txt in the archive. The website's licenses page links here." \
+            --latest=false
+
+  deploy:
+    name: Deploy to Cloudflare Pages
+    needs: [vm, sources]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    concurrency:
+      group: deploy-production
+      cancel-in-progress: false
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+    steps:
+      - name: Skip until Cloudflare is set up
+        if: env.CLOUDFLARE_API_TOKEN == ''
+        run: echo "::notice::Deploy skipped: Cloudflare credentials not configured."
+
+      - uses: actions/download-artifact@v8
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        with:
+          name: site-${{ github.sha }}
+          path: dist/
+
+      - name: Upload to Cloudflare Pages
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: |
+          # Creates the project on the first deploy; harmless when it exists.
+          npx --yes wrangler@4.147.0 pages project create learnbash --production-branch=main || true
+          npx --yes wrangler@4.147.0 pages deploy dist --project-name=learnbash --branch=main \
+            --commit-hash=${{ github.sha }}

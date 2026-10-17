@@ -26,6 +26,14 @@ RUN chmod 755 /usr/local/lib/learnbash/* /etc/learnbash-init \
  && chmod 700 /root \
  && mkdir /out \
  && apk info -v | sort > /out/packages.txt \
+ # name, version, origin (source package), license, homepage, aports commit:
+ # used for the licenses page and to collect the matching source code.
+ && awk -v OFS='\t' ' \
+      /^P:/ { p = substr($0, 3) } /^V:/ { v = substr($0, 3) } /^o:/ { o = substr($0, 3) } \
+      /^L:/ { l = substr($0, 3) } /^U:/ { u = substr($0, 3) } /^c:/ { c = substr($0, 3) } \
+      /^$/  { if (p != "") print p, v, o, l, u, c; p = v = o = l = u = c = "" } \
+      END   { if (p != "") print p, v, o, l, u, c }' /lib/apk/db/installed \
+    | sort > /out/packages.tsv \
  && cp /etc/alpine-release /out/alpine-release \
  # The kernel is shipped separately; modules/firmware are not needed (all
  # drivers we rely on are built in); docs and the package manager only cost

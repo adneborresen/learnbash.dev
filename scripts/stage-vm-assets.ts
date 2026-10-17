@@ -1,5 +1,6 @@
-// Copies the built snapshot into public/vm/ under a content-hashed name (so it
-// can be cached forever) and writes vm.json, which the website reads first.
+// Copies the built snapshot into public/vm/state/ under a content-hashed name
+// (cached forever, see public/_headers) and writes vm.json, which the website
+// reads first (always revalidated, so a new snapshot is picked up at once).
 import crypto from "node:crypto";
 import fs from "node:fs";
 import path from "node:path";
@@ -9,10 +10,10 @@ const outDir = path.join(ROOT, "public/vm");
 const manifest = JSON.parse(fs.readFileSync(path.join(path.dirname(STATE_FILE), "manifest.json"), "utf8"));
 const zst = fs.readFileSync(STATE_FILE);
 const hash = crypto.createHash("sha256").update(zst).digest("hex").slice(0, 12);
-const name = `state.${hash}.bin.zst`;
+const name = `state/${hash}.bin.zst`;
 
 fs.rmSync(outDir, { recursive: true, force: true });
-fs.mkdirSync(outDir, { recursive: true });
+fs.mkdirSync(path.join(outDir, "state"), { recursive: true });
 fs.copyFileSync(STATE_FILE, path.join(outDir, name));
 const assets = {
   state: name,

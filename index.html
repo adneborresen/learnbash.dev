@@ -4,18 +4,68 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>learnbash.dev: learn Bash in a real Linux terminal</title>
-  <meta name="description" content="Learn Bash by solving challenges in a real Linux terminal, right in your browser. Nothing to install.">
+  <meta name="description" content="Learn Bash by solving short challenges in a real Linux terminal that runs in your browser. Free, nothing to install, no sign-up.">
 </head>
 <body>
 <header class="site-header">
   <a class="brand" href="/">learnbash<span>.dev</span></a>
+  <nav aria-label="Main"><a href="#challenges">Challenges</a></nav>
 </header>
+
 <main class="home">
-  <h1>Learn Bash in a real Linux terminal</h1>
-  <p class="lead">Short challenges, a real Linux machine running in your browser, and instant feedback. Nothing to install.</p>
-  <p class="progress-summary" id="summary"></p>
-  <ol class="challenge-list" id="list"></ol>
+  <section class="hero">
+    <div class="hero-text">
+      <h1>Learn Bash in a real Linux terminal</h1>
+      <p class="lead">Short challenges, a real Linux machine running right in your browser, and instant
+        feedback. Learn the command line by using it.</p>
+      <p class="cta">
+        <a class="button primary" id="start" href="/challenges/look-around/">Start the first challenge →</a>
+      </p>
+      <p class="small">Free · Nothing to install · No sign-up</p>
+    </div>
+    <div class="hero-term" aria-hidden="true">
+      <pre><span class="p">learner@learnbash:~$</span> ls
+<span class="d">logs</span>  <span class="d">projects</span>  todo.txt
+<span class="p">learner@learnbash:~$</span> grep ERROR app.log | wc -l
+71
+<span class="p">learner@learnbash:~$</span> <span class="cursor"> </span></pre>
+      <p class="hero-check">✔ Correct! 71 errors.</p>
+    </div>
+  </section>
+
+  <section class="how" aria-labelledby="how-title">
+    <h2 id="how-title">How it works</h2>
+    <ol class="steps">
+      <li>
+        <h3>A real Linux machine</h3>
+        <p>Not a simulation: a complete Linux system with the same GNU tools as Ubuntu or Debian
+          servers starts inside your browser. Nothing you type can break your computer.</p>
+      </li>
+      <li>
+        <h3>One idea per challenge</h3>
+        <p>Each short story teaches one new command or concept and reuses what you learned before.
+          Hints are there when you're stuck.</p>
+      </li>
+      <li>
+        <h3>Instant feedback</h3>
+        <p>Press <strong>Check</strong>: the machine itself is inspected to see whether you solved it.
+          Afterwards, an explanation shows what you learned.</p>
+      </li>
+    </ol>
+  </section>
+
+  <section class="course" id="challenges" aria-labelledby="course-title">
+    <h2 id="course-title">First day on the server</h2>
+    <p class="muted" id="summary">12 challenges for complete beginners.</p>
+    <ol class="challenge-list" id="list"></ol>
+    <p class="small muted">Your progress is saved in this browser only.</p>
+  </section>
 </main>
+
+<footer class="site-footer">
+  <span>© 2026 learnbash.dev</span>
+  <a href="/licenses/">Licenses &amp; source code</a>
+</footer>
 <script type="module" src="/src/pages/home.ts"></script>
 </body>
 </html>

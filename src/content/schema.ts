@@ -40,6 +40,15 @@ export type ChallengeMeta = z.infer<typeof challengeMetaSchema>;
 /** Body sections every challenge.md must have, in this order. */
 export const SECTIONS = ["Story", "Goal", "Hint 1", "Hint 2", "Hint 3", "Explanation"] as const;
 
+/** A challenge in lists (the landing page). */
+export interface ChallengeSummary {
+  id: string;
+  order: number;
+  title: string;
+  module: string;
+  concept: string;
+}
+
 /** What the website gets for each challenge (no solutions or test data). */
 export interface CompiledChallenge {
   id: string;

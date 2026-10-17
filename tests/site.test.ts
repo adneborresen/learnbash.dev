@@ -1,5 +1,7 @@
-// Site logic that needs no VM: URLs and saved progress.
+// Site logic that needs no VM: URLs, saved progress and HTTP headers.
+import fs from "node:fs";
 import { describe, expect, test } from "vitest";
+import { headersFor, parseHeaders } from "../scripts/vite-plugin-headers.ts";
 import { ProgressStore, STORAGE_KEY } from "../src/site/progress.ts";
 import { challengeIdFromPath, challengeUrl } from "../src/site/routes.ts";
 
@@ -76,5 +78,22 @@ describe("progress", () => {
     p.markSolved("x");
     expect(p.isSolved("x")).toBe(true);
     expect(new ProgressStore(undefined).isSolved("x")).toBe(false);
+  });
+});
+
+describe("_headers (Cloudflare Pages format)", () => {
+  const rules = parseHeaders(fs.readFileSync("public/_headers", "utf8"));
+
+  test("every page gets the security headers", () => {
+    for (const p of ["/", "/challenges/look-around/", "/licenses/"]) {
+      expect(headersFor(rules, p).get("content-security-policy")).toContain("default-src 'self'");
+    }
+  });
+
+  test("hashed files are cached forever, vm.json never, pages by default", () => {
+    expect(headersFor(rules, "/assets/challenge-abc123.js").get("cache-control")).toBe("public, max-age=31536000, immutable");
+    expect(headersFor(rules, "/vm/state/291b7f762371.bin.zst").get("cache-control")).toBe("public, max-age=31536000, immutable");
+    expect(headersFor(rules, "/vm/vm.json").get("cache-control")).toBe("no-cache");
+    expect(headersFor(rules, "/challenges/look-around/").has("cache-control")).toBe(false);
   });
 });

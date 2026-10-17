@@ -1,0 +1,14 @@
+/* Text pages: licenses, 404. */
+.doc { max-width: 860px; margin: 0 auto; padding: 24px 16px 48px; }
+.doc h1 { font-size: 1.9rem; line-height: 1.2; margin: 8px 0 12px; }
+.doc h2 { font-size: 1.3rem; margin: 32px 0 10px; }
+.table-wrap { overflow-x: auto; border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); }
+.doc table { border-collapse: collapse; width: 100%; font-size: 0.9rem; }
+.doc th, .doc td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
+.doc tbody tr:last-child td { border-bottom: 0; }
+.doc td.parts { color: var(--muted); }
+.doc details { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); margin-bottom: 8px; }
+.doc summary { padding: 10px 12px; cursor: pointer; }
+.doc details pre { margin: 0 12px 12px; white-space: pre-wrap; font-size: 0.8rem; max-height: 360px; overflow: auto; }
+.not-found-term { background: var(--term-bg); color: #e8e8e6; margin-top: 24px; }
+.not-found-term .p { color: #6fdc8c; font-weight: 700; }

@@ -7,3 +7,4 @@ build/
 public/vm/
 playwright-report/
 test-results/
+docs/deploy.md

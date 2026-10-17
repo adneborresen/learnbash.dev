@@ -6,11 +6,14 @@
 import fs from "node:fs";
 import path from "node:path";
 import type { Connect, Plugin } from "vite";
+import type { ChallengeSummary, CompiledChallenge } from "../src/content/schema.ts";
 import { challengeIdFromPath, challengeUrl } from "../src/site/routes.ts";
 import { CHALLENGES_DIR, compileChallenge, loadChallenges } from "./lib/challenges.ts";
 
 const ID = "virtual:challenges";
 const RESOLVED = "\0" + ID;
+const INDEX_ID = "virtual:challenge-index";
+const INDEX_RESOLVED = "\0" + INDEX_ID;
 const PAGE = "challenge.html";
 
 const escapeHtml = (s: string) =>
@@ -30,16 +33,21 @@ export function challengesPlugin(): Plugin {
       outDir = path.resolve(config.root, config.build.outDir);
     },
     resolveId(id) {
-      return id === ID ? RESOLVED : undefined;
+      if (id === ID) return RESOLVED;
+      if (id === INDEX_ID) return INDEX_RESOLVED;
+      return undefined;
     },
     load(id) {
-      if (id !== RESOLVED) return undefined;
+      if (id !== RESOLVED && id !== INDEX_RESOLVED) return undefined;
       this.addWatchFile(CHALLENGES_DIR);
       const { challenges, errors } = loadChallenges();
       if (errors.length > 0) {
         this.error(`Invalid challenges:\n  - ${errors.join("\n  - ")}`);
       }
-      return `export default ${JSON.stringify(challenges.map(compileChallenge))};`;
+      const compiled = challenges.map(compileChallenge);
+      const data: Array<ChallengeSummary | CompiledChallenge> =
+        id === RESOLVED ? compiled : compiled.map(({ id, order, title, module, concept }) => ({ id, order, title, module, concept }));
+      return `export default ${JSON.stringify(data)};`;
     },
     configureServer(server) {
       server.middlewares.use(rewriteChallengeUrls);
@@ -47,8 +55,10 @@ export function challengesPlugin(): Plugin {
       server.watcher.add(CHALLENGES_DIR);
       server.watcher.on("all", (_event, file) => {
         if (!file.startsWith(CHALLENGES_DIR)) return;
-        const mod = server.moduleGraph.getModuleById(RESOLVED);
-        if (mod) server.moduleGraph.invalidateModule(mod);
+        for (const resolved of [RESOLVED, INDEX_RESOLVED]) {
+          const mod = server.moduleGraph.getModuleById(resolved);
+          if (mod) server.moduleGraph.invalidateModule(mod);
+        }
         server.ws.send({ type: "full-reload" });
       });
     },

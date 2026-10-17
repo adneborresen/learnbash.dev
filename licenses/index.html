@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Licenses &amp; source code · learnbash.dev</title>
+  <meta name="description" content="The free and open-source software behind learnbash.dev, its licenses, and where to get the source code.">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">learnbash<span>.dev</span></a>
+</header>
+
+<main class="doc">
+  <h1>Licenses &amp; source code</h1>
+  <p>learnbash.dev is built on free and open-source software. Thank you to everyone who makes it.
+    This page lists that software, its licenses, and where to get its source code.</p>
+
+  <h2>The Linux system in your browser</h2>
+  <p>The machine you practise on runs <strong>Alpine Linux <span id="alpine-version"></span></strong> (32-bit x86)
+    with the GNU tools listed below. When you open a challenge, your browser downloads a copy of this
+    system. Many of its parts are licensed under the GNU General Public License (GPL), which entitles you
+    to their source code:</p>
+  <ul>
+    <li><a id="sources-link" href="#"><strong>Download the complete source code</strong></a> of every package
+      in the exact image this website uses: the build recipes and patches from Alpine, and the original
+      upstream source files.</li>
+    <li><a id="recipe-link" href="#">How the image is assembled</a> from these packages.</li>
+  </ul>
+  <div class="table-wrap">
+    <table>
+      <thead><tr><th>Source package</th><th>Version</th><th>License</th><th>Installed parts</th></tr></thead>
+      <tbody id="linux-packages"></tbody>
+    </table>
+  </div>
+
+  <h2>Code that runs in your browser</h2>
+  <p>These components are shipped with the website. Expand one to read its license.</p>
+  <div id="web-components"></div>
+
+  <h2>Course content</h2>
+  <p>The challenges, stories and explanations are © 2026 learnbash.dev. All rights reserved.</p>
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 learnbash.dev</span>
+  <a href="/">Home</a>
+</footer>
+<script type="module" src="/src/pages/licenses.ts"></script>
+</body>
+</html>

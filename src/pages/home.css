@@ -1,9 +1,44 @@
-.home { max-width: 720px; margin: 0 auto; padding: 24px 16px 48px; }
-.home h1 { font-size: 1.9rem; line-height: 1.2; margin: 8px 0 10px; }
-.lead { color: var(--muted); font-size: 1.1rem; margin: 0 0 20px; }
-.progress-summary { font-weight: 600; }
-.challenge-list { padding-left: 1.6em; }
-.challenge-list li { padding: 10px 0; border-bottom: 1px solid var(--border); }
-.challenge-list a { font-weight: 600; font-size: 1.05rem; }
+.home { max-width: 1040px; margin: 0 auto; padding: 0 16px 48px; }
+.muted { color: var(--muted); }
+.small { font-size: 0.9rem; }
+
+.hero { display: grid; gap: 28px; padding: 36px 0 28px; align-items: center; }
+.hero h1 { font-size: clamp(2rem, 6vw, 2.8rem); line-height: 1.15; margin: 0 0 14px; letter-spacing: -0.01em; }
+.lead { color: var(--muted); font-size: 1.15rem; margin: 0 0 22px; max-width: 34em; }
+.cta { margin: 0 0 10px; }
+.cta .button { font-size: 1.05rem; padding: 12px 20px; }
+.hero-text .small { color: var(--muted); margin: 0; }
+
+.hero-term { background: var(--term-bg); color: #e8e8e6; border-radius: 10px; padding: 16px 18px; min-width: 0;
+  box-shadow: 0 10px 30px rgb(0 0 0 / 0.18); }
+.hero-term pre { margin: 0; padding: 0; background: none; font-size: 0.92rem; line-height: 1.6; overflow-x: auto; }
+@media (max-width: 420px) { .hero-term pre { font-size: 0.74rem; } }
+.hero-term .p { color: #6fdc8c; font-weight: 700; }
+.hero-term .d { color: #6d9bff; font-weight: 700; }
+.hero-term .cursor { background: #e8e8e6; }
+.hero-check { margin: 12px 0 0; padding: 6px 10px; border-radius: 6px; background: #16281d; color: #6fdc8c; font-size: 0.92rem; }
+
+.how h2, .course h2 { font-size: 1.4rem; margin: 28px 0 12px; }
+.steps { list-style: none; padding: 0; margin: 0; display: grid; gap: 14px; }
+.steps li { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); padding: 14px 16px; }
+.steps h3 { margin: 0 0 4px; font-size: 1.05rem; }
+.steps p { margin: 0; color: var(--muted); }
+
+.course .muted { margin-top: -6px; }
+.challenge-list { list-style: none; padding: 0; margin: 14px 0; counter-reset: c;
+  background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
+.challenge-list li { counter-increment: c; display: flex; align-items: center; gap: 12px; padding: 0 14px; }
+.challenge-list li + li { border-top: 1px solid var(--border); }
+.challenge-list li::before { content: counter(c); flex: none; width: 1.8em; height: 1.8em; display: grid; place-items: center;
+  border-radius: 50%; background: var(--code-bg); color: var(--muted); font-size: 0.85rem; font-weight: 600; }
+.challenge-list li.solved::before { background: var(--ok-bg); color: var(--ok); }
+.challenge-list a { flex: 1; min-width: 0; padding: 12px 0; text-decoration: none; color: var(--text); }
+.challenge-list a:hover .title { text-decoration: underline; }
+.challenge-list .title { display: block; font-weight: 600; color: var(--accent); }
 .challenge-list .concept { display: block; color: var(--muted); font-size: 0.92rem; }
-.challenge-list .mark { color: var(--ok); font-size: 0.9rem; font-weight: 600; }
+.challenge-list .mark { flex: none; color: var(--ok); font-weight: 700; }
+
+@media (min-width: 820px) {
+  .hero { grid-template-columns: 1.1fr 1fr; padding-top: 56px; }
+  .steps { grid-template-columns: repeat(3, 1fr); }
+}

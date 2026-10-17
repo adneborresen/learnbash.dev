@@ -74,6 +74,11 @@ pre { background: var(--code-bg); padding: 10px 12px; border-radius: 6px; overfl
 .brand span { color: var(--muted); }
 .site-header nav { display: flex; gap: 14px; align-items: center; font-size: 0.92rem; color: var(--muted); }
 
+.site-footer {
+  display: flex; flex-wrap: wrap; gap: 8px 20px; justify-content: center;
+  padding: 18px 16px 24px; border-top: 1px solid var(--border); color: var(--muted); font-size: 0.9rem;
+}
+
 button, .button {
   font: inherit; font-size: 0.95rem; cursor: pointer; text-decoration: none; display: inline-block;
   padding: 8px 16px; min-height: 40px; border-radius: var(--radius);

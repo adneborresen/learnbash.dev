@@ -21,6 +21,20 @@ async function typeCommand(page: Page, line: string) {
 
 const feedback = (page: Page) => page.locator("#feedback");
 
+// The pages run under the Content-Security-Policy from public/_headers
+// (applied by `vite preview`). Any violation means something would break in
+// production, so every test fails on one.
+test.beforeEach(async ({ page }) => {
+  await page.addInitScript(() => {
+    const seen: string[] = ((window as unknown as { cspViolations: string[] }).cspViolations = []);
+    document.addEventListener("securitypolicyviolation", (e) => seen.push(`${e.violatedDirective}: ${e.blockedURI}`));
+  });
+});
+test.afterEach(async ({ page }) => {
+  const violations = await page.evaluate(() => (window as unknown as { cspViolations?: string[] }).cspViolations ?? []);
+  expect(violations, "Content-Security-Policy violations").toEqual([]);
+});
+
 test("answer challenge: wrong answer, explore, right answer, progress kept", async ({ page }) => {
   await openChallenge(page, "look-around");
   await expect.poll(() => screenText(page)).toContain("learner@learnbash:~$");

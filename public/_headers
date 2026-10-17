@@ -1,0 +1,21 @@
+# HTTP headers for Cloudflare Pages. `vite preview` applies them too
+# (scripts/vite-plugin-headers.ts), so the browser tests run with them.
+# Rules that match the same path are combined, so keep paths that set the
+# same header apart.
+
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  X-Frame-Options: DENY
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=()
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'wasm-unsafe-eval'; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data:; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'none'
+
+# Hashed file names: safe to cache forever.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+/vm/state/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# Points to the current snapshot: always check for a newer one.
+/vm/vm.json
+  Cache-Control: no-cache

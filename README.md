@@ -3,7 +3,7 @@
 Learn Bash by solving small challenges in a real Linux system that runs entirely in your
 browser (the [v86](https://github.com/copy/v86) x86 emulator + a tiny Alpine Linux with GNU tools).
 
-Status: early development (milestone M4: challenge page). To add a challenge, see
+Status: getting ready to launch (milestone M6). To add a challenge, see
 [docs/authoring.md](docs/authoring.md).
 
 ## Requirements
@@ -25,6 +25,7 @@ npm run dev         # site at http://localhost:5173/ (engine playground: /dev/en
 npm run build       # production build into dist/
 npm run test:e2e    # build, then play challenges in Chromium, Firefox and WebKit
                     # (first time: npx playwright install chromium firefox webkit)
+sh scripts/collect-sources.sh  # source code of every package in the image (GPL); CI publishes it
 ```
 
 Build outputs land in `build/`: `build/image/` (kernel, initramfs, `packages.txt`) and
@@ -40,8 +41,10 @@ Build outputs land in `build/`: `build/image/` (kernel, initramfs, `packages.txt
 - `src/engine/` – the engine: `vm-session.ts` (restore/setup/check/reset, shared by the website and
   the Node tests), `browser-vm.ts` (lazy-loads v86 + the snapshot), `terminal-view.ts` (xterm.js +
   mobile key bar), `agent-client.ts` (guest agent protocol).
-- `index.html`, `challenge.html`, `src/pages/` – the pages. The build writes one
-  `challenges/<id>/index.html` per challenge from `challenge.html`.
+- `index.html` (landing), `challenge.html`, `licenses/index.html`, `404.html`, `src/pages/` –
+  the pages. The build writes one `challenges/<id>/index.html` per challenge from
+  `challenge.html`. The licenses page is generated from the image's package list.
+- `public/_headers` – caching and security headers (Cloudflare Pages format).
 - `src/site/` – shared styles, URLs and progress (saved in the browser's localStorage).
 - `dev/` – developer pages (engine playground).
 - `docs/spike-results.md` – measurements from the M0 prototype.
