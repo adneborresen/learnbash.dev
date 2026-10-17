@@ -134,4 +134,5 @@ For each challenge the tests check that the starting state fails, the reference 
 every wrong attempt fails, answers with stray spaces are accepted, and setup is deterministic.
 CI runs all of this; a challenge that fails can't be published.
 
-Try it in the browser with `npm run dev`.
+Try it in the browser with `npm run dev`: the new challenge appears in the list on the home
+page and at `http://localhost:5173/challenges/<id>/`. Saving any challenge file reloads the page.
