@@ -39,7 +39,8 @@ export function challengesPlugin(): Plugin {
     },
     load(id) {
       if (id !== RESOLVED && id !== INDEX_RESOLVED) return undefined;
-      this.addWatchFile(CHALLENGES_DIR);
+      // No this.addWatchFile(CHALLENGES_DIR): the dev server would treat the
+      // folder as an import and fail. configureServer below handles reloads.
       const { challenges, errors } = loadChallenges();
       if (errors.length > 0) {
         this.error(`Invalid challenges:\n  - ${errors.join("\n  - ")}`);

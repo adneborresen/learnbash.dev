@@ -71,7 +71,6 @@ export function licensesPlugin(): Plugin {
     load(id) {
       if (id !== RESOLVED) return undefined;
       if (!fs.existsSync(PACKAGES_FILE)) this.error("build/image/packages.tsv is missing: run npm run build:image first");
-      this.addWatchFile(PACKAGES_FILE);
       return `export default ${JSON.stringify(loadLicensesData())};`;
     },
     generateBundle(_options, bundle) {
