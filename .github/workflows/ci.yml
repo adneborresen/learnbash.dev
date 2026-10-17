@@ -132,7 +132,8 @@ jobs:
     steps:
       - name: Skip until Cloudflare is set up
         if: env.CLOUDFLARE_API_TOKEN == ''
-        run: echo "::notice::Deploy skipped: Cloudflare credentials not configured."
+        run: |
+          echo "::notice::Deploy skipped: Cloudflare credentials not configured."
 
       - uses: actions/download-artifact@v8
         if: env.CLOUDFLARE_API_TOKEN != ''
