@@ -63,6 +63,9 @@ with an HTML comment right next to it. It is hidden from learners and listed by
 `sort` orders uppercase before lowercase here. <!-- TODO-REVIEW: true for all locales? -->
 ```
 
+The same works anywhere in the project: start a comment with the marker (after `#` in
+scripts and config files, after `//` in code).
+
 ## The environment
 
 The VM runs Alpine Linux with **GNU** bash 5, coreutils, findutils, grep, sed, gawk and less (not

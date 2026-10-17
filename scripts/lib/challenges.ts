@@ -213,25 +213,32 @@ export function compileChallenge(c: LoadedChallenge): CompiledChallenge {
   };
 }
 
-/** Every TODO-REVIEW marker in the content and docs, for expert review. */
-export function findTodoReviews(): TodoReview[] {
+/** Folders that aren't ours to review: dependencies, build output, test results. */
+const NOT_REVIEWED = new Set(["node_modules", "dist", "build", ".git", "playwright-report", "test-results", "public/vm"]);
+/** Text files that can hold a marker. */
+const REVIEWED_FILE = /(\.(md|sh|answer|ts|js|json|html|css|yml|yaml|txt)|^Dockerfile|^_headers)$/;
+/** A marker is the first word of a comment (after <!--, #, // or /*). Mentions elsewhere don't count. */
+const MARKER = /(<!--|#|\/\/|\/\*)\s*TODO-REVIEW\b/;
+
+/** Every TODO-REVIEW marker in the project (content, docs, code, config), for expert review. */
+export function findTodoReviews(root = ROOT): TodoReview[] {
   const out: TodoReview[] = [];
   const walk = (d: string) => {
     for (const e of fs.readdirSync(d, { withFileTypes: true })) {
       const p = path.join(d, e.name);
-      if (e.isDirectory()) walk(p);
-      else if (/\.(md|sh|answer)$/.test(e.name)) {
+      const rel = path.relative(root, p).replace(/\\/g, "/");
+      if (e.isDirectory()) {
+        if (!NOT_REVIEWED.has(rel) && !NOT_REVIEWED.has(e.name)) walk(p);
+      } else if (REVIEWED_FILE.test(e.name)) {
         // In Markdown, skip fenced code blocks (examples, not real markers).
         let inFence = false;
         fs.readFileSync(p, "utf8").split("\n").forEach((text, i) => {
           if (e.name.endsWith(".md") && text.trimStart().startsWith("```")) inFence = !inFence;
-          if (!inFence && text.includes("TODO-REVIEW")) {
-            out.push({ file: path.relative(ROOT, p).replace(/\\/g, "/"), line: i + 1, text: text.trim() });
-          }
+          if (!inFence && MARKER.test(text)) out.push({ file: rel, line: i + 1, text: text.trim() });
         });
       }
     }
   };
-  for (const d of ["challenges", "docs", "image"]) if (fs.existsSync(path.join(ROOT, d))) walk(path.join(ROOT, d));
+  walk(root);
   return out;
 }
