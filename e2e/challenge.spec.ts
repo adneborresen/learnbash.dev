@@ -137,7 +137,8 @@ test.describe("course controls on a touch screen", () => {
     const save = page.getByRole("button", { name: "Control O (save in nano)", exact: true });
     const exit = page.getByRole("button", { name: "Control X (exit nano)", exact: true });
     await typeCommand(page, "nano ~/note.txt");
-    await expect.poll(() => screenText(page)).toContain("Write Out");
+    // nano shortens its shortcut labels on narrow terminals ("^O Write Ou"), but not "Exit".
+    await expect.poll(() => screenText(page)).toContain("^X Exit");
     await page.keyboard.type("Team: website");
     await page.keyboard.press("Enter");
     await page.keyboard.type("Status: draft");
@@ -165,7 +166,7 @@ test.describe("course controls on a touch screen", () => {
     await expect.poll(() => screenText(page)).toContain("Wrote 3 lines");
     await check.click();
     await expect(feedback(page)).toHaveClass(/pass/); // Nano is still open.
-    await expect.poll(() => screenText(page)).toContain("Write Out");
+    await expect.poll(() => screenText(page)).toContain("^X Exit");
     await exit.click();
     await expect.poll(() => screenText(page)).toContain("learner@learnbash:~$");
     expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
