@@ -25,6 +25,9 @@ You've just logged in to the company server. Time to look around.
 Find the name of the only file (not a folder) you can see in your home directory and
 type it into the answer box.
 
+Type commands in the terminal and press <kbd>Enter</kbd> to run them. Folders are also
+called *directories*.
+
 ## Hint 1
 
 You start in your home directory. There is a short command that **l**i**s**ts what's

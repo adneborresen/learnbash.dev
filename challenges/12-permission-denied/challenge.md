@@ -17,7 +17,7 @@ Last task of the day: deploy the new website. A colleague left you a script:
 You try it:
 
 ```
-$ ./deploy.sh
+learner@learnbash:~$ ./deploy.sh
 -bash: ./deploy.sh: Permission denied
 ```
 

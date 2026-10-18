@@ -30,7 +30,8 @@ that counts lines, and a way to feed grep's output into it.
 ## Hint 2
 
 `wc -l` counts lines. The `|` character (the *pipe*) sends the output of one command
-into the next: `COMMAND1 | COMMAND2`.
+into the next: `COMMAND1 | COMMAND2`. (Typed on its own, `wc -l` waits for you to type
+text. Press <kbd>Ctrl</kbd>+<kbd>C</kbd> to get your prompt back.)
 
 ## Hint 3
 

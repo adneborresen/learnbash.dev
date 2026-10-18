@@ -14,7 +14,7 @@ The accountant is on the phone, slightly panicked:
 
 > I need `budget_2024.csv` for a meeting in ten minutes! It's somewhere in
 > `~/documents`, but there are folders inside folders inside folders. Could you
-> copy it to your home directory and send it over?
+> copy it to your home directory? I'll grab it from there.
 
 ## Goal
 
@@ -34,7 +34,8 @@ and prints the path of each file with that name.
 ## Hint 3
 
 Run `find documents -name budget_2024.csv` from your home directory. Then copy the
-path it prints: `cp PATH ~/`. Pressing <kbd>Tab</kbd> while you type the path helps.
+file: `cp PATH ~/`, replacing PATH with the path find printed. Pressing <kbd>Tab</kbd>
+while typing a path completes folder names for you.
 
 ## Explanation
 

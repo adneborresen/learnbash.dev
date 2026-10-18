@@ -30,7 +30,8 @@ text inside files and prints the lines that match.
 ## Hint 2
 
 `grep "ERROR 503" FILES` prints every line that contains `ERROR 503`. You can give it
-all the logs at once with a wildcard: `*.log`.
+all the logs at once with a wildcard: `*.log`. The quotes keep `ERROR 503` together as
+one search phrase.
 
 ## Hint 3
 

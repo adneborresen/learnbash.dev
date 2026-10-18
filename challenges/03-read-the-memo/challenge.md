@@ -28,9 +28,9 @@ file. Since the file is long, a program that lets you scroll and search will hel
 
 ## Hint 2
 
-`less handbook.txt` opens the file in a viewer. Press <kbd>Space</kbd> for the next
-page and <kbd>q</kbd> to quit. Type `/` followed by a word and <kbd>Enter</kbd> to
-search for it.
+`less handbook.txt` opens the file in a viewer. While it's open, your keys control the
+viewer: <kbd>Space</kbd> for the next page, `/` followed by a word and <kbd>Enter</kbd>
+to search, and <kbd>q</kbd> to quit back to the command prompt.
 
 ## Hint 3
 

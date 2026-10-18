@@ -28,13 +28,15 @@ You need two commands: one to **m**a**k**e a **dir**ectory, and one to **c**o**p
 
 ## Hint 2
 
-`mkdir backup` creates the folder (run it in your home directory). `cp FILE FOLDER/`
-copies a file into a folder.
+`mkdir backup` creates the folder (run it in your home directory; like many commands,
+it prints nothing when it works). `cp FILE FOLDER/` copies a file into a folder: replace
+FILE and FOLDER with real names, e.g. `cp config/app.conf backup/`.
 
 ## Hint 3
 
 In your home directory, run:
-`mkdir backup`, then `cp config/nginx.conf config/app.conf backup/`.
+`mkdir backup` (skip it if the folder exists already), then
+`cp config/nginx.conf config/app.conf backup/`. The destination always comes last.
 Check the result with `ls backup`.
 
 ## Explanation

@@ -32,7 +32,8 @@ with `cd reports`.
 
 ## Hint 3
 
-Run `cd reports`, then `mv report_final_FINAL.txt q3-report.txt`, then
+Run `cd reports` (unless you're in it already), then
+`mv report_final_FINAL.txt q3-report.txt`, then
 `rm junk.tmp`. Check with `ls`.
 
 ## Explanation

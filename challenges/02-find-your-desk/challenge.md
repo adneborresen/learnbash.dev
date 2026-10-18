@@ -32,7 +32,9 @@ once by separating folder names with `/`.
 
 ## Hint 3
 
-From your home directory, run `cd projects/website/assets`. Check with `pwd`.
+From your home directory, run `cd projects/website/assets`. (Already inside `projects`?
+Then `cd website/assets` is enough. `cd` on its own takes you back home.) `pwd` shows
+where you are now.
 
 ## Explanation
 

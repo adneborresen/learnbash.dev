@@ -36,7 +36,8 @@ what it matches before you move anything.
 
 ## Hint 3
 
-Run `cd logs`, then `mkdir archive`, then `mv *.log archive/`. Check with `ls` and
+Run `cd logs`, then `mkdir archive`, then `mv *.log archive/` (skip any step you've
+already done). When the last name is a folder, `mv` moves everything *into* it. Check with `ls` and
 `ls archive`.
 
 ## Explanation
