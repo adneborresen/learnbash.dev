@@ -26,7 +26,13 @@ Find the name of the only file (not a folder) you can see in your home directory
 type it into the answer box.
 
 Type commands in the terminal and press <kbd>Enter</kbd> to run them. Folders are also
-called *directories*.
+called *directories*. Start with `pwd` to see where you are, then `ls` to see what is there.
+
+The prompt, such as `learner@learnbash:~$`, is already printed: do not type it.
+Put your answer in the separate answer box and press **Check**. Some successful
+commands print nothing; a returning prompt means you can type the next command.
+**Reset** restores this exercise's starting files. Every challenge starts on a
+fresh machine; files do not carry over, but your solved progress is remembered.
 
 ## Hint 1
 

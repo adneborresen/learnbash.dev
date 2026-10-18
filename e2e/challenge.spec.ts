@@ -10,7 +10,7 @@ async function openChallenge(page: Page, id: string) {
 
 /** What the terminal currently shows (xterm renders text into DOM rows). */
 async function screenText(page: Page) {
-  return ((await page.locator("#term .xterm-rows").textContent()) ?? "").replace(/ /g, " ");
+  return ((await page.locator("#term .xterm-rows").textContent()) ?? "").replace(/\u00a0/g, " ");
 }
 
 async function typeCommand(page: Page, line: string) {
@@ -48,7 +48,7 @@ test("answer challenge: wrong answer, explore, right answer, progress kept", asy
   await typeCommand(page, "ls");
   await expect.poll(() => screenText(page)).toContain("todo-for-new-hire.txt");
 
-  await answer.fill("  todo-for-new-hire.txt  "); // e.g. pasted, with non-breaking spaces
+  await answer.fill("\u00a0 todo-for-new-hire.txt \u00a0"); // e.g. pasted, with non-breaking spaces
   await answer.press("Enter"); // Enter in the answer box checks too
   await expect(feedback(page)).toHaveClass(/pass/);
   await expect(page.locator("#solved")).toBeVisible();
@@ -115,32 +115,89 @@ test.describe("phone-sized screen", () => {
   });
 });
 
+test.describe("course controls on a touch screen", () => {
+  test.use({ viewport: { width: 375, height: 740 }, hasTouch: true });
+
+  test("Ctrl-C key stops a waiting cat before the recovery answer passes", async ({ page }) => {
+    await openChallenge(page, "get-your-prompt-back");
+    await typeCommand(page, "cat");
+    await page.getByLabel("Recovery code").fill("6318");
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+    await expect(feedback(page)).toHaveClass(/fail/);
+    await expect(feedback(page)).toContainText("Ctrl+C");
+    await page.getByRole("button", { name: "Control C (stop command)", exact: true }).click();
+    await expect.poll(() => screenText(page)).toMatch(/learner@learnbash:~\$ *$/m);
+    await page.getByRole("button", { name: "Check", exact: true }).click();
+    await expect(feedback(page)).toHaveClass(/pass/);
+  });
+
+  test("nano saves and edits through the key bar, and Check reads the saved file", async ({ page }) => {
+    await openChallenge(page, "leave-a-note");
+    const check = page.getByRole("button", { name: "Check", exact: true });
+    const save = page.getByRole("button", { name: "Control O (save in nano)", exact: true });
+    const exit = page.getByRole("button", { name: "Control X (exit nano)", exact: true });
+    await typeCommand(page, "nano ~/note.txt");
+    await expect.poll(() => screenText(page)).toContain("Write Out");
+    await page.keyboard.type("Team: website");
+    await page.keyboard.press("Enter");
+    await page.keyboard.type("Status: draft");
+    await page.keyboard.press("Enter");
+    await page.keyboard.type("Next: review logs");
+    await check.click();
+    await expect(feedback(page)).toHaveClass(/fail/);
+    await expect(feedback(page)).toContainText("No ~/note.txt");
+    await save.click();
+    await expect.poll(() => screenText(page)).toContain("Write to File:");
+    await page.keyboard.press("Enter");
+    await expect.poll(() => screenText(page)).toContain("Wrote 3 lines");
+    await check.click();
+    await expect(feedback(page)).toHaveClass(/fail/);
+    await page.locator("#term").click();
+    await page.keyboard.press("ArrowUp");
+    await page.keyboard.press("End");
+    for (let i = 0; i < 5; i++) await page.keyboard.press("Backspace");
+    await page.keyboard.type("ready");
+    await check.click();
+    await expect(feedback(page)).toHaveClass(/fail/); // The correction is still unsaved.
+    await save.click();
+    await expect.poll(() => screenText(page)).toContain("Write to File:");
+    await page.keyboard.press("Enter");
+    await expect.poll(() => screenText(page)).toContain("Wrote 3 lines");
+    await check.click();
+    await expect(feedback(page)).toHaveClass(/pass/); // Nano is still open.
+    await expect.poll(() => screenText(page)).toContain("Write Out");
+    await exit.click();
+    await expect.poll(() => screenText(page)).toContain("learner@learnbash:~$");
+    expect(await page.evaluate(() => document.documentElement.scrollWidth - innerWidth)).toBeLessThanOrEqual(0);
+  });
+});
+
 test.describe("on a phone", () => {
   const { defaultBrowserType: _, ...phone } = devices["Pixel 7"];
   test.use(phone);
+  test.skip(({ browserName }) => browserName !== "chromium", "touch input is sent through the Chrome DevTools Protocol");
 
-  test("swiping the terminal scrolls back through long output", async ({ page, browserName }) => {
-    test.skip(browserName !== "chromium", "touch input is sent through the Chrome DevTools Protocol");
-    await openChallenge(page, "find-your-desk");
+  test("swiping the terminal scrolls back through long output", async ({ page }) => {
+    await openChallenge(page, "ask-for-help");
     await page.locator("#term").tap();
-    await page.keyboard.type("ls --help");
+    await page.keyboard.type("cat --help");
     await page.keyboard.press("Enter");
-    await expect.poll(() => screenText(page)).toContain("ls invocation");
-    expect(await screenText(page)).not.toContain("Usage: ls");
+    await expect.poll(() => screenText(page)).toContain("cat invocation");
+    expect(await screenText(page)).not.toContain("Usage: cat");
 
     // Drag a finger down over the terminal, as when scrolling up on a phone.
-    // Narrow lines wrap, so the help text is a few hundred lines long.
+    // Even cat's shorter help wraps and scrolls on a phone.
     const box = (await page.locator("#term").boundingBox())!;
     const x = box.x + box.width / 2;
     const cdp = await page.context().newCDPSession(page);
     const touch = (type: "touchStart" | "touchMove" | "touchEnd", y?: number) =>
       cdp.send("Input.dispatchTouchEvent", { type, touchPoints: y === undefined ? [] : [{ x, y }] });
-    for (let i = 0; i < 40 && !(await screenText(page)).includes("Usage: ls"); i++) {
+    for (let i = 0; i < 40 && !(await screenText(page)).includes("Usage: cat"); i++) {
       await touch("touchStart", box.y + 20);
       for (let step = 1; step <= 10; step++) await touch("touchMove", box.y + 20 + step * 30);
       await touch("touchEnd");
     }
-    expect(await screenText(page)).toContain("Usage: ls");
+    expect(await screenText(page)).toContain("Usage: cat");
   });
 });
 

@@ -1,1 +1,1 @@
-ln -s documents/finance/2024/q4/budget_2024.csv budget_2024.csv
+ln -s documents/operations/2026/q4/server-inventory_2026.csv server-inventory_2026.csv

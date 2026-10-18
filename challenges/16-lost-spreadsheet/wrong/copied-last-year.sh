@@ -1,2 +1,2 @@
-find documents -name 'budget*'
-cp documents/archive/old/finance/budget_2023.csv ~/
+find documents -name 'server-inventory*'
+cp documents/archive/old/operations/server-inventory_2025.csv ~/

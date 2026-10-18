@@ -12,6 +12,8 @@ const ctrl = (letter: string) => String.fromCharCode(letter.toUpperCase().charCo
 export const KEY_BAR: Array<[string, string, string]> = [
   ["Tab", "\t", "Tab (complete)"],
   ["Ctrl‑C", ctrl("c"), "Control C (stop command)"],
+  ["Ctrl‑O", ctrl("o"), "Control O (save in nano)"],
+  ["Ctrl‑X", ctrl("x"), "Control X (exit nano)"],
   ["Esc", ESC, "Escape"],
   ["↑", `${ESC}[A`, "Up arrow (previous command)"],
   ["↓", `${ESC}[B`, "Down arrow"],

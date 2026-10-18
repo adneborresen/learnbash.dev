@@ -4,7 +4,7 @@ title: Rename and clean up
 module: find-your-way
 concept: Renaming and moving files
 introduces: [mv]
-reuses: [rm, ls, cd]
+reuses: [rm, ls, cd, quoting]
 check: state
 ---
 

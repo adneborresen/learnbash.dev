@@ -1,1 +1,1 @@
-cp documents/finance/2024/q1/budget_2024_draft.csv ~/
+cp documents/operations/2026/q1/server-inventory_2026_draft.csv ~/

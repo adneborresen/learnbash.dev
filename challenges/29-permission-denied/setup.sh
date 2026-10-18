@@ -3,12 +3,13 @@
 cd "$LEARNER_HOME" || exit 1
 cat > deploy.sh <<'EOF'
 #!/bin/bash
-echo "Deploying the website..."
-echo "website v2 deployed by $(whoami)" > "$HOME/deployed.txt"
-echo "Done! The new website is live."
+printf 'Rehearsing website recovery locally...\n'
+printf 'website recovery rehearsal completed by %s\n' "$(whoami)" > "$HOME/deployed.txt"
+printf 'Local rehearsal complete.\n'
 EOF
-chmod 644 deploy.sh
 mkdir -p /run/learnbash/expected
-cp deploy.sh /run/learnbash/expected/
-printf 'website v2 deployed by learner\n' > /run/learnbash/expected/deployed.txt
+cp deploy.sh /run/learnbash/expected/deploy.sh
+printf 'website recovery rehearsal completed by learner\n' > /run/learnbash/expected/deployed.txt
+
+chmod 644 deploy.sh
 fix_owner

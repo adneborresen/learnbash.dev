@@ -25,6 +25,19 @@ test("landing page lists the course and continues where you left off", async ({ 
   await expect(items.first()).toHaveClass(/solved/);
 });
 
+test("existing completions survive expansion to two complete parts", async ({ page }) => {
+  const existing = ["look-around", "find-your-desk", "back-on-track", "read-the-welcome-note", "read-the-memo", "make-room", "make-a-backup", "remove-the-junk", "rename-and-clean", "the-interns-logs", "lost-spreadsheet", "which-log-broke", "how-many-errors", "write-the-report", "top-visitor", "permission-denied"];
+  await page.addInitScript((ids) => localStorage.setItem("learnbash:progress:v1", JSON.stringify({ solved: Object.fromEntries(ids.map((id) => [id, "2026-01-01T00:00:00Z"])), hints: {} })), existing);
+  await page.goto("/");
+  const parts = page.locator("#parts .part");
+  await expect(parts.nth(0).locator("li")).toHaveCount(15);
+  await expect(parts.nth(1).locator("li")).toHaveCount(15);
+  await expect(page.getByText("You've solved 16 of 30.")).toBeVisible();
+  await expect(page.locator("#start")).toHaveAttribute("href", "/challenges/get-your-prompt-back/");
+  await page.goto("/challenges/desk-ready/");
+  await expect(page.locator("#solved-next")).toHaveAttribute("href", "/challenges/lost-spreadsheet/");
+});
+
 test("every page links icons that exist", async ({ page, request }) => {
   for (const url of ["/", "/challenges/look-around/", "/licenses/", "/privacy/"]) {
     await page.goto(url);

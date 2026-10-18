@@ -1,0 +1,1 @@
+cat --number ~/rota.txt

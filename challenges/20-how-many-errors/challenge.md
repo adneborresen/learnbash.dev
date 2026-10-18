@@ -3,8 +3,8 @@ id: how-many-errors
 title: How many errors?
 module: incident
 concept: Connecting commands with a pipe
-introduces: ["|", wc]
-reuses: [grep]
+introduces: ["|"]
+reuses: [grep, wc, "Ctrl+C"]
 check: answer
 answer_label: Number of ERROR lines
 expected_answer: "71"
@@ -12,8 +12,8 @@ expected_answer: "71"
 
 ## Story
 
-The payment service had a rough morning. Its log is `~/logs/app.log`, about 500
-lines long. The team lead asks:
+The checkout incident's log, `~/logs/app.log`, has 500 records, but only some are errors.
+The team lead asks:
 
 > How many lines in there are errors? Lines with `ERROR` on them. I need a number.
 
@@ -24,8 +24,7 @@ number into the answer box.
 
 ## Hint 1
 
-You already know how to *show* the ERROR lines with `grep`. Now you need something
-that counts lines, and a way to feed grep's output into it.
+You already know how to *show* the ERROR lines with `grep`. You have also counted lines with `wc -l`. Now connect those two operations.
 
 ## Hint 2
 

@@ -1,0 +1,1 @@
+cat ~/logs/app.log

@@ -4,12 +4,25 @@ import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, expect, test } from "vitest";
-import { findTodoReviews, loadChallenges } from "../scripts/lib/challenges.ts";
+import { CHALLENGES_DIR, findTodoReviews, loadChallenges } from "../scripts/lib/challenges.ts";
 
 // Built at runtime so this file doesn't show up in the real scan.
 const M = ["TODO", "REVIEW"].join("-");
 const root = fs.mkdtempSync(path.join(os.tmpdir(), "learnbash-todo-"));
 afterAll(() => fs.rmSync(root, { recursive: true, force: true }));
+
+test("course sources use LF, including shell scripts typed into the Linux guest", () => {
+  const walk = (dir: string) => {
+    for (const entry of fs.readdirSync(dir, { withFileTypes: true })) {
+      const file = path.join(dir, entry.name);
+      if (entry.isDirectory()) walk(file);
+      else if (/\.(md|sh|answer)$/.test(entry.name)) {
+        expect(fs.readFileSync(file).includes(13), file).toBe(false);
+      }
+    }
+  };
+  walk(CHALLENGES_DIR);
+});
 
 function write(file: string, text: string) {
   fs.mkdirSync(path.dirname(path.join(root, file)), { recursive: true });

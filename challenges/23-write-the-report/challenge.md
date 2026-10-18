@@ -1,71 +1,48 @@
 ---
 id: write-the-report
-title: Write the report
+title: "Write the report"
 module: incident
-concept: Saving output to a file
-introduces: [">", ">>", echo]
-reuses: [grep, cat]
+concept: "Appending output with >>"
+introduces: [">>"]
+reuses: [">", "echo", "cat", "grep"]
 check: state
 ---
 
 ## Story
 
-The team lead wants last night's errors in writing:
-
-> Put all the ERROR lines from `~/logs/app.log` into `~/report.txt`. Then add a last
-> line that says exactly `END OF REPORT`, so I know nothing got cut off.
+The error report has already been prepared in `~/report.txt`. The team lead needs one final marker so it is clear where the report ends.
 
 ## Goal
 
-Create `~/report.txt` containing every line of `~/logs/app.log` that contains
-`ERROR`, followed by one final line: `END OF REPORT`.
+Keep all 71 error records already in `~/report.txt`, in their current order, and add exactly one final line:
+
+```text
+END OF REPORT
+```
+
+Keep the source `~/logs/app.log` unchanged. There must be nothing after the marker.
 
 ## Hint 1
 
-The output a command would print on the screen can be saved into a file instead. The
-`>` character does that. To add something *without* replacing what's already in the
-file, there's a doubled version.
+A single redirection arrow replaces a file. You need the form that adds output after its existing contents.
 
 ## Hint 2
 
-`grep ERROR logs/app.log > report.txt` saves the ERROR lines. `echo "some text"`
-prints a line of text; `>>` adds output to the **end** of a file.
+`>>` appends output to the end of a file. Use echo to print the marker. Read the report first; if the marker is already its final line, do not add it again.
 
 ## Hint 3
 
-From your home directory, run `grep ERROR logs/app.log > report.txt`, then
-`echo "END OF REPORT" >> report.txt`. Check with `cat report.txt`.
+Run `cat ~/report.txt`. If the marker is missing, run `echo "END OF REPORT" >> ~/report.txt` once.
+If you already added it correctly, you are done. If the errors were overwritten or the marker appears twice, use Reset and append it once.
 
 ## Explanation
 
-Normally a command's output goes to the terminal. **Redirection** sends it into a
-file instead:
+**`>>`** appends output. It creates a file if necessary, but unlike `>` it does not empty an existing file.
 
-| Syntax | Does |
-|---|---|
-| `COMMAND > FILE` | write the output to FILE: creates it, or **replaces** its contents |
-| `COMMAND >> FILE` | **append** the output to the end of FILE (creates it if needed) |
-
-**`echo`** prints its arguments, which makes it handy for writing a line of text:
-`echo "END OF REPORT" >> report.txt`.
-
-The classic mistake is using `>` twice:
-
-```
-grep ERROR logs/app.log > report.txt
-echo "END OF REPORT" > report.txt      # oops: replaces the ERROR lines!
+```sh
+echo "END OF REPORT" >> ~/report.txt
 ```
 
-The second `>` empties the file before `echo` writes its line. No warning, no undo.
+A single `>` here would replace all the evidence with just the marker. Running the append twice adds two markers. Inspect the current file before repeating a step that adds content.
 
-That emptying happens even before the command runs, which leads to a famous
-trap: `sort names.txt > names.txt` leaves you with an **empty** file, because
-the shell empties `names.txt` before `sort` gets to read it. Write to a new file
-instead.
-
-Redirection works with any command. `ls > files.txt` saves a listing, and a
-pipeline can end in a file: `grep ERROR app.log | sort > sorted-errors.txt`.
-
-Error messages are separate from normal output, so `>` doesn't capture them:
-they still appear on the screen. To save them, use `2>`:
-`find / -name '*.conf' 2> errors.txt`.
+The check reads the finished report. Rebuilding it from the unchanged source also works, provided the errors stay in source order and the marker appears once at the end.

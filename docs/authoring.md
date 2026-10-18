@@ -29,8 +29,8 @@ id: read-the-memo
 title: Read the memo
 module: find-your-way             # the part (an id from src/content/parts.ts)
 concept: Reading files            # the ONE new idea
-introduces: [cat, less]           # commands/syntax first taught here
-reuses: [cd, ls]                  # must be introduced by an earlier challenge
+introduces: [less]           # commands/syntax first taught here
+reuses: [cat, ls]                  # must be introduced by an earlier challenge
 check: answer                     # "state" (inspect the VM) or "answer" (answer box)
 answer_label: Wi-Fi password      # answer challenges only
 expected_answer: correct-horse    # answer challenges only (used by the tests)
@@ -57,7 +57,7 @@ Teach the concept properly. Shown after the challenge is solved.
 
 All six `##` sections are required, in this order. Markdown is supported (code blocks, tables,
 `<kbd>`). The validator also checks that `reuses` only names things an earlier challenge
-`introduces`, so the difficulty curve stays smooth.
+`introduces`, to catch declared prerequisite mistakes. Teaching one idea at a time still requires a human review.
 
 **Accuracy:** if you are not 100% sure a statement is true for Bash/GNU tools in general, mark it
 with an HTML comment right next to it. It is hidden from learners and listed by
@@ -69,6 +69,9 @@ with an HTML comment right next to it. It is hidden from learners and listed by
 
 The same works anywhere in the project: start a comment with the marker (after `#` in
 scripts and config files, after `//` in code).
+
+**Line endings:** save challenge Markdown and shell scripts as UTF-8 with LF line endings,
+including on Windows. The content tests reject carriage returns in challenge sources.
 
 ## The environment
 
@@ -115,6 +118,11 @@ and kind ("3 of 5 files moved", not "wrong"). Helpers from `check-lib.sh`:
 | `answer_trimmed` | the answer box content without surrounding whitespace |
 | `check_answer EXPECTED [WRONG_MSG] [RIGHT_MSG]` | compare the answer |
 
+Only require a returned prompt when the goal needs it (navigation or prompt recovery).
+A saved note can pass with nano still open; a reading answer can pass with less still open.
+Copy foreground-process detection into the individual checker when needed: changing the
+image's check-lib.sh does not affect the existing snapshot without an image rebuild.
+
 Prefer checking the **final state** (files, contents, permissions, current directory) over
 guessing which commands were typed.
 
@@ -147,6 +155,11 @@ npm run todo-review                                         # list statements aw
 For each challenge the tests check that the starting state fails, the reference solution passes,
 every accepted alternative passes, every wrong attempt fails, answers with stray spaces are
 accepted, and setup is deterministic.
+Interactive behavior needs a dedicated VM or browser test. The typed-command harness waits
+for a completion marker and cannot drive a waiting cat or an editor through ordinary
+solution/accepted/wrong files. Use direct terminal input for those interactions, and keep
+a non-interactive reference solution for the final-state check.
+
 CI runs all of this; a challenge that fails can't be published.
 
 Try it in the browser with `npm run dev`: the new challenge appears in the list on the home

@@ -1,2 +1,1 @@
-cd incident
-grep -l "ERROR 503" *.log
+grep "ERROR 503" ~/incident/*.log

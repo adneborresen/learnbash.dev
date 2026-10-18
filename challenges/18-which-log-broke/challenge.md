@@ -3,8 +3,8 @@ id: which-log-broke
 title: Which log broke?
 module: incident
 concept: Searching inside files
-introduces: [grep, "grep -l", "grep -r"]
-reuses: [cd, "*"]
+introduces: [grep]
+reuses: ["~", "*", quoting]
 check: answer
 answer_label: Name of the log file
 expected_answer: web-06.log
@@ -12,7 +12,7 @@ expected_answer: web-06.log
 
 ## Story
 
-Last night, customers saw a **503 Service Unavailable** error on the website. The
+During this morning's checkout incident, customers saw a **503 Service Unavailable** error on the website. The
 logs from all eight web servers are in `~/incident`. Your manager wants to know:
 
 > Which server logged `ERROR 503`? Just give me the log file's name.
@@ -35,8 +35,9 @@ one search phrase.
 
 ## Hint 3
 
-Run `cd incident`, then `grep "ERROR 503" *.log`. Each matching line starts with the
-name of the file it came from. (`grep -l` prints only the file names.)
+Run `grep "ERROR 503" ~/incident/*.log`; it works from any directory. Each matching line starts with the
+name of the file it came from. There are many matching lines; you only need their filename prefix.
+(`grep -l` prints only the file names.)
 
 ## Explanation
 
@@ -46,11 +47,12 @@ name of the file it came from. (`grep -l` prints only the file names.)
 grep PATTERN FILE...
 ```
 
-With more than one file, each line starts with the file name:
+With more than one file, each line starts with the file name. From `~/incident`, the
+search prints 71 matches, all from the same file. Here is its first output line:
 
 ```
 $ grep "ERROR 503" *.log
-web-06.log:2026-10-16 23:41:07 ERROR 503 Service Unavailable (upstream timeout)
+web-06.log:2026-10-17 09:00:07 ERROR 503 checkout: database timeout
 ```
 
 **Quotes matter here too.** `grep ERROR 503 *.log` (without quotes) means: search
@@ -71,9 +73,3 @@ Handy options:
 The pattern is actually a *regular expression*, a small language for describing
 text. For plain words and numbers like here, you don't need to know anything about
 that yet.
-
-**Exit status.** Every command reports success or failure with a number, its *exit
-status*: `0` means success. grep returns `0` if it found something, `1` if it found
-nothing, and `2` if there was an error (such as a missing file). Bash keeps the last
-exit status in `$?`, so `echo $?` shows it. Scripts use this to decide what to do
-next.

@@ -3,7 +3,7 @@ id: the-interns-logs
 title: The intern's 300 logs
 module: find-your-way
 concept: Wildcards match many files at once
-introduces: ["*", "?"]
+introduces: ["*"]
 reuses: [mv, mkdir, ls, cd]
 check: state
 ---
@@ -55,20 +55,20 @@ command.** Before `mv` even starts, Bash replaces `*.log` with the list of match
 names. `mv` simply receives 300 file names, followed by `archive/`. That's why the same
 wildcards work with every command: `ls`, `cp`, `rm` and the rest.
 
-So you can **preview** what a pattern matches with `echo` or `ls`:
+So you can **preview** what a pattern matches with `ls`:
 
 ```
-$ echo web-00?.log
+$ ls web-00?.log
 web-001.log web-002.log web-003.log web-004.log web-005.log web-006.log web-007.log web-008.log web-009.log
 ```
 
 Do that before using a pattern with `rm`!
 
-Why not `mv * archive/`? Because `*` matches **everything**, including the `.txt`
+Why not `mv * archive/`? Because `*` matches all the non-hidden names here, including the `.txt`
 files and even `archive` itself (`mv` complains that it can't move a directory
 into itself).
 
-Two details:
+With Bash's default glob settings:
 
 - `*` does not match names that start with a dot (hidden files).
 - If nothing matches, Bash passes the pattern on unchanged, so you see errors like
