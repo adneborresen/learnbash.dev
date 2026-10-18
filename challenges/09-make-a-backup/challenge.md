@@ -2,9 +2,9 @@
 id: make-a-backup
 title: Make a backup
 module: find-your-way
-concept: Creating directories and copying files
-introduces: [mkdir, cp]
-reuses: [ls, cd]
+concept: Copying files
+introduces: [cp]
+reuses: [mkdir, ls, cd]
 check: state
 ---
 
@@ -24,13 +24,13 @@ into it. The originals must stay where they are.
 
 ## Hint 1
 
-You need two commands: one to **m**a**k**e a **dir**ectory, and one to **c**o**p**y files.
+First make the folder, as in the last challenge. Then you need a command to **c**o**p**y files.
 
 ## Hint 2
 
-`mkdir backup` creates the folder (run it in your home directory; like many commands,
-it prints nothing when it works). `cp FILE FOLDER/` copies a file into a folder: replace
-FILE and FOLDER with real names, e.g. `cp config/app.conf backup/`.
+`mkdir backup` creates the folder (run it in your home directory). `cp FILE FOLDER/`
+copies a file into a folder: replace FILE and FOLDER with real names, e.g.
+`cp config/app.conf backup/`.
 
 ## Hint 3
 
@@ -40,10 +40,6 @@ In your home directory, run:
 Check the result with `ls backup`.
 
 ## Explanation
-
-**`mkdir`** (*make directory*) creates a directory: `mkdir backup`. To create several
-levels at once, add `-p`: `mkdir -p backup/2026/october` also creates the missing
-parents (and doesn't complain if they already exist).
 
 **`cp`** (*copy*) copies files. It works in two ways:
 

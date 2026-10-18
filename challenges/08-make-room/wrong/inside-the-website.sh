@@ -1,0 +1,1 @@
+mkdir projects/website/notes

@@ -1,5 +1,9 @@
 // The other pages and the HTTP headers they are served with.
 import { expect, test } from "@playwright/test";
+import { loadChallenges } from "../scripts/lib/challenges.ts";
+
+const { challenges } = loadChallenges();
+const inFirstPart = challenges.filter((c) => c.meta.module === challenges[0].meta.module).length;
 
 test("landing page lists the course and continues where you left off", async ({ page }) => {
   await page.goto("/");
@@ -8,15 +12,15 @@ test("landing page lists the course and continues where you left off", async ({ 
   await expect(parts).toHaveCount(2);
   await expect(parts.first().locator("h3")).toHaveText("Part 1: Find your way and work with files");
   const items = page.locator("#parts li");
-  await expect(items).toHaveCount(12);
+  await expect(items).toHaveCount(challenges.length);
   await expect(page.getByRole("link", { name: "Start the first challenge →" })).toHaveAttribute("href", "/challenges/look-around/");
 
   await page.evaluate(() =>
     localStorage.setItem("learnbash:progress:v1", JSON.stringify({ solved: { "look-around": "2026-01-01T00:00:00Z" }, hints: {} })),
   );
   await page.reload();
-  await expect(page.getByText("You've solved 1 of 12.")).toBeVisible();
-  await expect(parts.first()).toContainText("1 of 6 solved.");
+  await expect(page.getByText(`You've solved 1 of ${challenges.length}.`)).toBeVisible();
+  await expect(parts.first()).toContainText(`1 of ${inFirstPart} solved.`);
   await expect(page.locator("#start")).toHaveText("Continue: Find your desk →");
   await expect(items.first()).toHaveClass(/solved/);
 });
@@ -75,7 +79,7 @@ test("link previews, canonical URLs and the sitemap", async ({ page, request }) 
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  expect(locs).toHaveLength(1 + 12 + 1);
+  expect(locs).toHaveLength(1 + challenges.length + 1);
   expect(locs).toContain("https://learnbash.dev/challenges/permission-denied/");
   for (const loc of locs) expect((await request.get(new URL(loc).pathname)).ok(), loc).toBe(true);
   expect(await (await request.get("/robots.txt")).text()).toContain("Sitemap: https://learnbash.dev/sitemap.xml");

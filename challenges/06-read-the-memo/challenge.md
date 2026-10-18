@@ -2,9 +2,9 @@
 id: read-the-memo
 title: Read the memo
 module: find-your-way
-concept: Reading files
-introduces: [cat, less]
-reuses: [ls]
+concept: Reading long files
+introduces: [less]
+reuses: [cat, ls]
 check: answer
 answer_label: Current Wi-Fi password
 expected_answer: maple-otter-42
@@ -23,8 +23,8 @@ Find the **current** Wi-Fi password in `handbook.txt` and type it into the answe
 
 ## Hint 1
 
-`ls` shows the file is there. Now you need a command that shows what's *inside* a
-file. Since the file is long, a program that lets you scroll and search will help.
+`ls` shows the file is there. `cat` would show it, but the file is long and would
+rush past. A program that lets you scroll and search will help.
 
 ## Hint 2
 
@@ -40,12 +40,10 @@ you reach section 7. Note the password, then press <kbd>q</kbd>.
 
 ## Explanation
 
-**`cat`** prints a whole file to the terminal: `cat handbook.txt`. That's perfect for
-short files. For a long one, everything rushes past at once and you're left at the end.
-(The name comes from *concatenate*: `cat a.txt b.txt` prints both files, one after the
-other.)
+`cat handbook.txt` prints the whole file at once: everything rushes past and you're
+left at the end.
 
-**`less`** opens a file in a viewer you can move around in. Reading it with `less`
+**`less`** opens a file in a viewer you can move around in, one screen at a time. Reading it with `less`
 doesn't change the file.
 
 | Key | Does |

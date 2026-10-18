@@ -3,7 +3,7 @@ id: find-your-desk
 title: Find your desk
 module: find-your-way
 concept: Moving between directories
-introduces: [cd, absolute path, relative path, "..", "~"]
+introduces: [cd, relative path]
 reuses: [pwd, ls]
 check: state
 ---
@@ -38,31 +38,21 @@ where you are now.
 
 ## Explanation
 
-**`cd`** (*change directory*) moves you to another directory. You can tell it
-where to go in two ways:
+**`cd`** (*change directory*) moves you to another directory. You tell it where to
+go with a **path**: folder names separated by `/`.
 
-- An **absolute path** starts with `/`, the top of the whole file system (the
-  *root directory*). It works no matter where you are:
-  `cd /home/learner/projects/website/assets`
-- A **relative path** does not start with `/`. It is followed starting from the
-  directory you are in now: from `/home/learner`, `cd projects/website/assets`
-  ends up in the same place.
+`projects/website/assets` is a **relative path**: it's followed starting from the
+directory you're in now. From your home directory, `cd projects/website/assets` takes
+you three levels down in one go. From somewhere else, the same command fails, because
+there's no `projects` folder there. `cd` on its own always takes you back home.
 
-A few special names save typing:
-
-| Name | Means |
-|---|---|
-| `..` | the parent directory (one level up): `cd ..` |
-| `.` | the current directory |
-| `~` | your home directory: `cd ~/projects` works from anywhere |
-
-`cd` on its own takes you home. `cd -` jumps back to the directory you were in
-before.
+The prompt shows where you are (`~` is short for your home directory), and `pwd`
+prints the full path.
 
 **Tip:** press <kbd>Tab</kbd> while typing a path and Bash completes the name for
 you (`cd pro` + <kbd>Tab</kbd> → `cd projects/`). It saves time and avoids typos.
 
-`cd` normally prints nothing when it works (`cd -` is an exception: it prints where
-it took you). If the directory doesn't exist,
-you'll see an error such as `No such file or directory`, and you stay where you
-were.
+`cd` prints nothing when it works. If the directory doesn't exist, you'll see an error
+such as `No such file or directory`, and you stay where you were.
+
+The next challenge shows how to get back on track when you've taken a wrong turn.

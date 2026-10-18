@@ -2,9 +2,9 @@
 id: rename-and-clean
 title: Rename and clean up
 module: find-your-way
-concept: Renaming, moving and deleting files
-introduces: [mv, rm]
-reuses: [ls, cd]
+concept: Renaming and moving files
+introduces: [mv]
+reuses: [rm, ls, cd]
 check: state
 ---
 
@@ -23,12 +23,12 @@ In `~/reports`: rename `report_final_FINAL.txt` to `q3-report.txt` and delete
 ## Hint 1
 
 You don't need a special "rename" command: renaming a file is *moving* it to a new name.
-Deleting is called *removing*.
+Deleting works as in the last challenge.
 
 ## Hint 2
 
-`mv OLDNAME NEWNAME` renames a file. `rm FILE` deletes it. Go into the folder first
-with `cd reports`.
+`mv OLDNAME NEWNAME` renames a file: replace the placeholders with real names. Go into
+the folder first with `cd reports`.
 
 ## Hint 3
 
@@ -47,16 +47,9 @@ or both at once: `mv q3-report.txt archive/2026-q3.txt`. Unlike `cp`, the origin
 is gone afterwards. Like `cp`, `mv` silently **overwrites** a file that already has
 the new name; `mv -i` asks first.
 
-**`rm`** (*remove*) deletes files: `rm junk.tmp`.
-
-> ⚠️ **`rm` has no trash bin and no undo.** A deleted file is gone. Double-check the
-> name before pressing Enter, or use `rm -i`, which asks for each file.
-
-On its own, `rm` only deletes files. For directories:
-
-- `rmdir old` removes an **empty** directory.
-- `rm -r old` removes a directory **and everything inside it**. Be very careful
-  with it, especially combined with `-f` (*force*: don't ask, ignore missing files).
+Renaming with `mv` is safer than copying and deleting: there's never a moment with two
+versions, and nothing to forget to clean up. `rm junk.tmp` then removes what's left, as
+in the last challenge.
 
 **Tip:** names with spaces need quotes: `mv "final report.txt" report.txt`.
 Otherwise the shell treats `final` and `report.txt` as two separate names. That's
