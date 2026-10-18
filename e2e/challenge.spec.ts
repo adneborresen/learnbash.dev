@@ -1,5 +1,5 @@
 // End-to-end: the built site in a real browser, with the real VM.
-import { expect, test, type Page } from "@playwright/test";
+import { devices, expect, test, type Page } from "@playwright/test";
 
 /** Opens a challenge and waits until Linux is running and Check is enabled. */
 async function openChallenge(page: Page, id: string) {
@@ -112,5 +112,34 @@ test.describe("phone-sized screen", () => {
     for (const id of ["#title", "#goal", "#term", "#check"]) await expect(page.locator(id)).toBeVisible();
     await page.goto("/");
     expect(await page.evaluate(() => document.documentElement.scrollWidth - window.innerWidth)).toBeLessThanOrEqual(0);
+  });
+});
+
+test.describe("on a phone", () => {
+  const { defaultBrowserType: _, ...phone } = devices["Pixel 7"];
+  test.use(phone);
+
+  test("swiping the terminal scrolls back through long output", async ({ page, browserName }) => {
+    test.skip(browserName !== "chromium", "touch input is sent through the Chrome DevTools Protocol");
+    await openChallenge(page, "find-your-desk");
+    await page.locator("#term").tap();
+    await page.keyboard.type("ls --help");
+    await page.keyboard.press("Enter");
+    await expect.poll(() => screenText(page)).toContain("ls invocation");
+    expect(await screenText(page)).not.toContain("Usage: ls");
+
+    // Drag a finger down over the terminal, as when scrolling up on a phone.
+    // Narrow lines wrap, so the help text is a few hundred lines long.
+    const box = (await page.locator("#term").boundingBox())!;
+    const x = box.x + box.width / 2;
+    const cdp = await page.context().newCDPSession(page);
+    const touch = (type: "touchStart" | "touchMove" | "touchEnd", y?: number) =>
+      cdp.send("Input.dispatchTouchEvent", { type, touchPoints: y === undefined ? [] : [{ x, y }] });
+    for (let i = 0; i < 40 && !(await screenText(page)).includes("Usage: ls"); i++) {
+      await touch("touchStart", box.y + 20);
+      for (let step = 1; step <= 10; step++) await touch("touchMove", box.y + 20 + step * 30);
+      await touch("touchEnd");
+    }
+    expect(await screenText(page)).toContain("Usage: ls");
   });
 });

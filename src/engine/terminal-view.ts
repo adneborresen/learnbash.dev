@@ -53,6 +53,45 @@ export class TerminalView {
     this.fit.fit();
     this.observer = new ResizeObserver(() => this.refit());
     this.observer.observe(container);
+    this.enableTouchScrolling(container);
+  }
+
+  /**
+   * xterm.js doesn't scroll on touch: a swipe over the terminal does nothing.
+   * Swiping scrolls back through earlier output; in full-screen programs
+   * (less, nano) it sends arrow keys instead, like a mouse wheel does. At the
+   * end of the output the swipe scrolls the page as usual.
+   */
+  private enableTouchScrolling(container: HTMLElement): void {
+    let lastY: number | undefined;
+    let leftover = 0;
+    container.addEventListener("touchstart", (e) => {
+      lastY = e.touches.length === 1 ? e.touches[0].clientY : undefined;
+      leftover = 0;
+    }, { passive: true, capture: true });
+    container.addEventListener("touchmove", (e) => {
+      if (lastY === undefined || e.touches.length !== 1) return;
+      const y = e.touches[0].clientY;
+      const lineHeight = container.clientHeight / this.term.rows;
+      leftover += (lastY - y) / lineHeight;
+      lastY = y;
+      const lines = Math.trunc(leftover);
+      if (lines === 0) {
+        e.preventDefault();
+        return;
+      }
+      leftover -= lines;
+      const buffer = this.term.buffer.active;
+      if (buffer.type === "alternate") {
+        this.session?.sendInput(`${ESC}[${lines < 0 ? "A" : "B"}`.repeat(Math.abs(lines)));
+      } else {
+        const atTop = buffer.viewportY === 0;
+        const atBottom = buffer.viewportY >= buffer.baseY;
+        if ((lines < 0 && atTop) || (lines > 0 && atBottom)) return; // let the page scroll
+        this.term.scrollLines(lines);
+      }
+      e.preventDefault();
+    }, { passive: false, capture: true });
   }
 
   get rows(): number {
