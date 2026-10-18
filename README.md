@@ -73,8 +73,8 @@ tables when the first data arrives. What learners are told about this is on the 
 
 Both endpoints only accept requests from the site's own pages (the `Origin` header).
 
-To read them, wrangler must be logged in to the Cloudflare account that has the database
-(`npx wrangler login`, once per computer):
+To read them, wrangler must be logged in to the Cloudflare account that has the database:
+run `npx wrangler login` once per computer (the commands say so when it's missing).
 
 ```sh
 npm run stats              # per challenge, in course order, for the last 7 days: opened (and on
