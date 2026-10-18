@@ -43,8 +43,8 @@ go with a **path**: folder names separated by `/`.
 
 `projects/website/assets` is a **relative path**: it's followed starting from the
 directory you're in now. From your home directory, `cd projects/website/assets` takes
-you three levels down in one go. From somewhere else, the same command fails, because
-there's no `projects` folder there. `cd` on its own always takes you back home.
+you three levels down in one go. From somewhere else, the same command fails (or leads
+somewhere else), because it's followed from there. `cd` on its own takes you back home.
 
 The prompt shows where you are (`~` is short for your home directory), and `pwd`
 prints the full path.
@@ -52,7 +52,7 @@ prints the full path.
 **Tip:** press <kbd>Tab</kbd> while typing a path and Bash completes the name for
 you (`cd pro` + <kbd>Tab</kbd> → `cd projects/`). It saves time and avoids typos.
 
-`cd` prints nothing when it works. If the directory doesn't exist, you'll see an error
+These `cd` commands print nothing when they work. If the directory doesn't exist, you'll see an error
 such as `No such file or directory`, and you stay where you were.
 
 The next challenge shows how to get back on track when you've taken a wrong turn.

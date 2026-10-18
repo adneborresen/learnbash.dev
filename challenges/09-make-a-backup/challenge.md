@@ -36,7 +36,7 @@ copies a file into a folder: replace FILE and FOLDER with real names, e.g.
 
 In your home directory, run:
 `mkdir backup` (skip it if the folder exists already), then
-`cp config/nginx.conf config/app.conf backup/`. The destination always comes last.
+`cp config/nginx.conf config/app.conf backup/`. The destination goes last.
 Check the result with `ls backup`.
 
 ## Explanation
@@ -60,7 +60,7 @@ missing backup/ exits 1 without creating backup; cp -R can create the directory.
 
 Two more things to know:
 
-- `cp` silently **overwrites** a file that already has the target name. `cp -i`
-  asks first.
+- By default, `cp` **overwrites** a file that already has the target name, without
+  asking. `cp -i` asks first.
 - To copy a whole directory with everything in it, add `-r` (*recursive*):
   `cp -r config config-backup`.

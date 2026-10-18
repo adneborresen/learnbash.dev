@@ -106,7 +106,7 @@ async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next
     setBusy(true);
     feedback("Checking…");
     try {
-      const r = await session.check(c.checkScript, answer.value);
+      const r = await session.check(c.checkScript, answer.value.trim());
       if (r.passed) {
         feedback(r.message || "Correct!", "pass");
         progress.markSolved(c.id);

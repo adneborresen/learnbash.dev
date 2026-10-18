@@ -40,7 +40,7 @@ commands, `mkdir` prints nothing when it works.
 are, and `mkdir projects/notes` creates it inside `projects`. You can give several names
 at once: `mkdir drafts archive`.
 
-It stops with an error in two cases:
+Two common errors:
 
 - **`File exists`**: there's already something with that name.
 - **`No such file or directory`**: a folder in the path is missing.

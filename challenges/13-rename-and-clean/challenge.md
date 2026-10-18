@@ -44,13 +44,15 @@ Run `cd reports` (unless you're in it already), then
 - **Move into a directory:** `mv q3-report.txt archive/` (the name stays the same)
 
 or both at once: `mv q3-report.txt archive/2026-q3.txt`. Unlike `cp`, the original
-is gone afterwards. Like `cp`, `mv` silently **overwrites** a file that already has
-the new name; `mv -i` asks first.
+is gone afterwards. Like `cp`, `mv` by default **overwrites** a file that already has
+the new name, without asking; `mv -i` asks first.
 
-Renaming with `mv` is safer than copying and deleting: there's never a moment with two
-versions, and nothing to forget to clean up. `rm junk.tmp` then removes what's left, as
+Renaming a file within the same folder with `mv` is safer than copying and deleting:
+the file just gets a new name, so there's never a second version and nothing to forget
+to clean up. `rm junk.tmp` then removes what's left, as
 in the last challenge.
 
-**Tip:** names with spaces need quotes: `mv "final report.txt" report.txt`.
+**Tip:** names with spaces need quotes: `mv "final report.txt" report.txt` (or a
+backslash before each space).
 Otherwise the shell treats `final` and `report.txt` as two separate names. That's
 one reason Linux users tend to name files with `-` or `_` instead of spaces.

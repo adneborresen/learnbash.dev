@@ -2,9 +2,8 @@
 . /usr/local/lib/learnbash/check-lib.sh
 d=$LEARNER_HOME/projects/notes
 if [ -L "$d" ]; then
-  fail "~/projects/notes is a link to another place. Remove it with rm projects/notes, then create a real directory with mkdir."
+  fail "~/projects/notes is a link to another place, not a directory. Press Reset, then create it with mkdir."
 elif [ -d "$d" ]; then
-  [ -f "$LEARNER_HOME/projects/website/src/index.html" ] || fail "The notes folder is there, but the website's index.html is gone. Press Reset and try again."
   pass "Room made: ~/projects/notes is ready."
 elif [ -e "$d" ]; then
   fail "~/projects/notes is a file, not a directory. Press Reset, then create it with mkdir."

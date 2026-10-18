@@ -48,7 +48,7 @@ test("answer challenge: wrong answer, explore, right answer, progress kept", asy
   await typeCommand(page, "ls");
   await expect.poll(() => screenText(page)).toContain("todo-for-new-hire.txt");
 
-  await answer.fill("  todo-for-new-hire.txt ");
+  await answer.fill("  todo-for-new-hire.txt  "); // e.g. pasted, with non-breaking spaces
   await answer.press("Enter"); // Enter in the answer box checks too
   await expect(feedback(page)).toHaveClass(/pass/);
   await expect(page.locator("#solved")).toBeVisible();

@@ -34,7 +34,7 @@ to search, and <kbd>q</kbd> to quit back to the command prompt.
 
 ## Hint 3
 
-Run `less handbook.txt`, type `/Wi-Fi` and press <kbd>Enter</kbd>. The first matches are
+Run `less handbook.txt` (if the viewer is already open, skip this), type `/Wi-Fi` and press <kbd>Enter</kbd>. The first matches are
 in the section about the **old** network: keep pressing <kbd>n</kbd> (next match) until
 you reach section 7. Note the password, then press <kbd>q</kbd>.
 

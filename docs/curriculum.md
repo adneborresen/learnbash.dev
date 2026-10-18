@@ -136,8 +136,8 @@ separator, not general CSV.
 - **Exit status before `if`:** success and failure, `&&` and `||`, then `if`.
 - **Robust scripts:** first let learners see a script carry on after a failure, then handle
   failures explicitly, then introduce `set -e`, `set -u` and `pipefail` one at a time, each with
-  examples of what it doesn't catch (`-e` doesn't stop after a failure inside an `if`
-  condition or an `&&`/`||` list). Arrays, arguments, traps and debugging are more than one part.
+  examples of what it doesn't catch (`-e` doesn't stop after a failing `if` condition, or
+  a failing command in an `&&`/`||` list other than the last). Arrays, arguments, traps and debugging are more than one part.
 - **Processes:** process ids, jobs, signals and cleanup get their own part.
 - **Shell rules deepen in stages:** basic quoting in part 1, redirection in part 2, literal
   text versus patterns in part 3; variables and command substitution before `find -exec` and

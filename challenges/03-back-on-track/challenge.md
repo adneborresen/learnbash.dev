@@ -31,18 +31,22 @@ up". Use `pwd` to see where you are at any time.
 
 ## Hint 2
 
-`cd ..` goes up one level. `cd ../..` goes up two levels at once. From
-`~/projects/blog/assets`, two levels up is `~/projects`.
+`..` means one level up: `cd ..` goes up one level, `cd ../..` two levels at once.
+From `~/projects/blog/assets`, two levels up is `~/projects`, where both projects are.
 
 ## Hint 3
 
-Run `cd projects/blog/assets` (if you're not there yet), then `cd ../../website/src`.
-`pwd` shows where you ended up. From anywhere, `cd ~/projects/website/src` also works.
+Run `pwd` to see where you are, then:
+
+- in `~/projects/blog/assets`: `cd ../../website/src`
+- in `~/projects` (if you already went up two levels): `cd website/src`
+- anywhere else: `cd ~/projects/website/src` works from any folder.
 
 ## Explanation
 
 Every directory has a special entry called **`..`**: its *parent*, the directory one
-level up. You can use it anywhere in a path:
+level up. (At the very top, `/`, there's nothing above: `..` is `/` itself.) You can use
+it anywhere in a path:
 
 - `cd ..` goes up one level.
 - `cd ../..` goes up two levels.
@@ -56,8 +60,9 @@ A few more ways to get somewhere without retracing your steps:
 | `/home/learner/projects` | an **absolute path**: it starts with `/`, the top of the whole file system (the *root directory*), so it means the same place wherever you are |
 | `.` | the current directory |
 
-A path that doesn't start with `/` or `~`, like `website/src`, is **relative**: it's
-followed from the directory you're in now.
+A path that doesn't start with `/`, like `website/src`, is **relative**: it's followed
+from the directory you're in now. A `~` at the start is replaced by Bash with your home
+directory before the command runs, so `~/projects` means `/home/learner/projects`.
 
 Two shortcuts: `cd` on its own takes you home, and `cd -` jumps back to the directory you
 were in before (it prints where it took you).
