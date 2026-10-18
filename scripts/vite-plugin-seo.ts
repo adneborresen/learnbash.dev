@@ -5,7 +5,7 @@
 //   plugin, which writes them after the build (withHeadTags below).
 // - The build writes sitemap.xml with every page and robots.txt pointing to it.
 import type { Plugin } from "vite";
-import { challengeUrl, HOME_URL, LICENSES_URL, SITE_ORIGIN } from "../src/site/routes.ts";
+import { challengeUrl, HOME_URL, LICENSES_URL, PRIVACY_URL, SITE_ORIGIN } from "../src/site/routes.ts";
 import { loadChallenges } from "./lib/challenges.ts";
 
 /** Made by scripts/make-icons.ts. */
@@ -15,6 +15,7 @@ export const OG_IMAGE = { path: "/og-image.png", width: 1200, height: 630 };
 const PAGES: Record<string, string> = {
   "/index.html": HOME_URL,
   "/licenses/index.html": LICENSES_URL,
+  "/privacy/index.html": PRIVACY_URL,
 };
 
 /**
@@ -54,7 +55,7 @@ export function seoPlugin(): Plugin {
       return url ? withHeadTags(html, url) : html;
     },
     generateBundle() {
-      const urls = [HOME_URL, ...loadChallenges().challenges.map((c) => challengeUrl(c.meta.id)), LICENSES_URL];
+      const urls = [HOME_URL, ...loadChallenges().challenges.map((c) => challengeUrl(c.meta.id)), LICENSES_URL, PRIVACY_URL];
       this.emitFile({ type: "asset", fileName: "sitemap.xml", source: sitemap(urls) });
       this.emitFile({
         type: "asset",

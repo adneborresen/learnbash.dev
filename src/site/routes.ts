@@ -6,6 +6,7 @@ export const SITE_ORIGIN = "https://learnbash.dev";
 
 export const HOME_URL = "/";
 export const LICENSES_URL = "/licenses/";
+export const PRIVACY_URL = "/privacy/";
 
 export function challengeUrl(id: string): string {
   return `/challenges/${id}/`;

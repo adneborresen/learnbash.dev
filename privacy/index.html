@@ -1,0 +1,68 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon.ico" sizes="32x32">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy · learnbash.dev</title>
+  <meta name="description" content="What learnbash.dev collects (anonymous counts and the feedback you send) and what it doesn't (no accounts, no cookies, no tracking of people).">
+</head>
+<body>
+<header class="site-header">
+  <a class="brand" href="/">learnbash<span>.dev</span></a>
+</header>
+
+<main class="doc">
+  <h1>Privacy</h1>
+  <p>In short: no accounts, no cookies, no ads and no tracking of people. We count anonymously what
+    happens in the challenges, so we can see where learners get stuck, and we keep the feedback you
+    choose to send.</p>
+
+  <h2>What stays in your browser</h2>
+  <ul>
+    <li><strong>The Linux machine</strong> runs entirely in your browser. What you type in the terminal,
+      the files you create and your answers are checked there and aren't sent to us. (The only
+      exception: if you send feedback, your last Check result goes along with it, see below.)</li>
+    <li><strong>Your progress</strong> (which challenges you've solved and how many hints you've opened)
+      is saved in your browser's local storage, on this device only. Clearing this site's data in your
+      browser deletes it.</li>
+  </ul>
+
+  <h2>Anonymous usage counts</h2>
+  <p>When you use a challenge, the page reports what happens: the challenge was opened, Linux started
+    (or failed to load), Check was pressed, the challenge was solved, a hint was opened, Reset was
+    pressed. Each report contains only the challenge, the event and whether you're on a phone or a
+    computer. We only keep a count per day, for example "back-on-track, 18 October, solved on a phone:
+    22". Nothing identifies you, and there's no way to follow one person through the course.</p>
+
+  <h2>Feedback you send</h2>
+  <p>If you rate a challenge or use "Something wrong or confusing?", we save your rating or message
+    together with the challenge, how many hints you had opened, your last Check result, whether you're
+    on a phone or a computer, and the time. Please don't include personal details unless you'd like a
+    reply; if you add your email address, we only use it to reply to you.</p>
+  <p>To stop one sender from flooding us with messages, we use a scrambled code made from your IP
+    address and the date. The IP address itself isn't saved, and the code changes every day.</p>
+
+  <h2>Visitor statistics and hosting</h2>
+  <p>The site is hosted by <a href="https://www.cloudflare.com/" rel="noopener">Cloudflare</a>, which also
+    stores the counts and feedback above. Like any web host, Cloudflare processes your IP address to
+    deliver the pages. We use Cloudflare Web Analytics to count page views; it doesn't use cookies or
+    fingerprinting. See
+    <a href="https://www.cloudflare.com/privacypolicy/" rel="noopener">Cloudflare's privacy policy</a>.</p>
+
+  <h2>Questions</h2>
+  <p>learnbash.dev is a small, non-commercial project. Questions about this page:
+    <a href="https://github.com/adneborresen/learnbash.dev/issues" rel="noopener">open an issue on GitHub</a>.</p>
+  <p class="muted">Last updated: 18 October 2026.</p>
+</main>
+
+<footer class="site-footer">
+  <span>© 2026 learnbash.dev</span>
+  <a href="/">Home</a>
+  <a href="/licenses/">Licenses &amp; source code</a>
+</footer>
+<script type="module" src="/src/pages/privacy.ts"></script>
+</body>
+</html>

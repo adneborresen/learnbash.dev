@@ -26,7 +26,7 @@ test("landing page lists the course and continues where you left off", async ({ 
 });
 
 test("every page links icons that exist", async ({ page, request }) => {
-  for (const url of ["/", "/challenges/look-around/", "/licenses/"]) {
+  for (const url of ["/", "/challenges/look-around/", "/licenses/", "/privacy/"]) {
     await page.goto(url);
     const hrefs = await page.locator('link[rel="icon"], link[rel="apple-touch-icon"]').evaluateAll((links) =>
       links.map((l) => l.getAttribute("href")!),
@@ -64,7 +64,7 @@ test("challenge pages show their story without JavaScript (what search engines s
 });
 
 test("link previews, canonical URLs and the sitemap", async ({ page, request }) => {
-  const pages = { "/": "learnbash.dev: learn Bash", "/challenges/look-around/": "Look around", "/licenses/": "Licenses" };
+  const pages = { "/": "learnbash.dev: learn Bash", "/challenges/look-around/": "Look around", "/licenses/": "Licenses", "/privacy/": "Privacy" };
   for (const [url, title] of Object.entries(pages)) {
     await page.goto(url);
     const head = page.locator("head");
@@ -79,7 +79,7 @@ test("link previews, canonical URLs and the sitemap", async ({ page, request }) 
 
   const sitemap = await (await request.get("/sitemap.xml")).text();
   const locs = [...sitemap.matchAll(/<loc>([^<]+)<\/loc>/g)].map((m) => m[1]);
-  expect(locs).toHaveLength(1 + challenges.length + 1);
+  expect(locs).toHaveLength(1 + challenges.length + 2); // home, challenges, licenses, privacy
   expect(locs).toContain("https://learnbash.dev/challenges/permission-denied/");
   for (const loc of locs) expect((await request.get(new URL(loc).pathname)).ok(), loc).toBe(true);
   expect(await (await request.get("/robots.txt")).text()).toContain("Sitemap: https://learnbash.dev/sitemap.xml");

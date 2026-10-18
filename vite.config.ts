@@ -16,6 +16,7 @@ export default defineConfig({
         home: page("index.html"),
         challenge: page("challenge.html"),
         licenses: page("licenses/index.html"),
+        privacy: page("privacy/index.html"),
         notFound: page("404.html"),
       },
     },

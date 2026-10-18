@@ -7,6 +7,7 @@
 .doc th, .doc td { text-align: left; padding: 6px 10px; border-bottom: 1px solid var(--border); vertical-align: top; }
 .doc tbody tr:last-child td { border-bottom: 0; }
 .doc td.parts { color: var(--muted); }
+.doc .muted { color: var(--muted); }
 .doc details { border: 1px solid var(--border); border-radius: var(--radius); background: var(--surface); margin-bottom: 8px; }
 .doc summary { padding: 10px 12px; cursor: pointer; }
 .doc details pre { margin: 0 12px 12px; white-space: pre-wrap; font-size: 0.8rem; max-height: 360px; overflow: auto; }
