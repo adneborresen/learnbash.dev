@@ -17,6 +17,7 @@
     "check:content": "node scripts/check-content.ts",
     "todo-review": "node scripts/check-content.ts --todo",
     "feedback": "node scripts/feedback.ts",
+    "stats": "node scripts/stats.ts",
     "test:e2e": "npm run build && playwright test"
   },
   "dependencies": {

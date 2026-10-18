@@ -7,6 +7,7 @@ import { PARTS } from "../content/parts.ts";
 import type { CompiledChallenge } from "../content/schema.ts";
 import { TerminalView } from "../engine/terminal-view.ts";
 import { setUpFeedback } from "./feedback-form.ts";
+import { reportUsage } from "./usage-report.ts";
 import { SetupError, type VmSession } from "../engine/vm-session.ts";
 import { ProgressStore } from "../site/progress.ts";
 import { challengeIdFromPath, challengeUrl, HOME_URL } from "../site/routes.ts";
@@ -27,6 +28,7 @@ if (index < 0) {
 }
 
 async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next?: CompiledChallenge) {
+  reportUsage(c.id, "opened");
   renderText(c, prev, next);
   setUpHints(c);
   let lastCheck = "";
@@ -60,14 +62,18 @@ async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next
     if (justNow) box.scrollIntoView({ block: "nearest", behavior: "smooth" });
   }
 
+  let started = false;
   async function startChallenge() {
     setBusy(true);
     try {
       await session!.start({ setup: c.setup, rows: view.rows, cols: view.cols });
+      if (!started) reportUsage(c.id, "started");
+      started = true;
       $("loading").hidden = true;
       if (hasFinePointer) view.focus();
     } catch (e) {
       console.error(e);
+      if (!started) reportUsage(c.id, "load-failed");
       feedback(
         e instanceof SetupError
           ? "This challenge couldn't be prepared. Press Reset to try again."
@@ -100,6 +106,7 @@ async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next
       "Linux couldn't be loaded. Check your connection and try again. (It needs a recent browser with WebAssembly.)";
     $("loading-progress").hidden = true;
     $("retry").hidden = false;
+    reportUsage(c.id, "load-failed");
     return;
   }
   await startChallenge();
@@ -109,10 +116,12 @@ async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next
     if (!session || busy) return;
     setBusy(true);
     feedback("Checking…");
+    reportUsage(c.id, "checked");
     try {
       const r = await session.check(c.checkScript, answer.value.trim());
       if (r.passed) {
         feedback(r.message || "Correct!", "pass");
+        if (!progress.isSolved(c.id)) reportUsage(c.id, "solved");
         progress.markSolved(c.id);
         showSolved(true);
       } else {
@@ -143,6 +152,7 @@ async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next
     disarm = undefined;
     reset.textContent = resetLabel;
     feedback("");
+    reportUsage(c.id, "reset");
     await startChallenge();
   });
 }
@@ -191,7 +201,9 @@ function setUpHints(c: CompiledChallenge) {
     button.textContent = shown === 0 ? `Show a hint (1 of ${total})` : `Show hint ${shown + 1} of ${total}`;
   };
   button.addEventListener("click", () => {
-    progress.setHintsShown(c.id, Math.min(total, progress.hintsShown(c.id) + 1));
+    const shown = Math.min(total, progress.hintsShown(c.id) + 1);
+    if (shown > progress.hintsShown(c.id) && shown <= 3) reportUsage(c.id, `hint-${shown as 1 | 2 | 3}`);
+    progress.setHintsShown(c.id, shown);
     update();
     (list.lastElementChild as HTMLElement | null)?.scrollIntoView({ block: "nearest" });
   });

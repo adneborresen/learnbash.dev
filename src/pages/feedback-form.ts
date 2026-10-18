@@ -1,6 +1,7 @@
 // Feedback on the challenge page: a thumb (and optional comment) after
 // solving, and "Something wrong or confusing?" next to the hints.
 import { FEEDBACK_LIMITS, type Feedback } from "../feedback/feedback.ts";
+import { device } from "./usage-report.ts";
 
 export const FEEDBACK_URL = "/api/feedback";
 
@@ -9,8 +10,6 @@ export interface FeedbackContext {
   hints: number;
   lastCheck: string;
 }
-
-const device = (): Feedback["device"] => (matchMedia("(pointer: coarse)").matches ? "phone" : "computer");
 
 async function send(data: Feedback & { website?: string }): Promise<boolean> {
   try {

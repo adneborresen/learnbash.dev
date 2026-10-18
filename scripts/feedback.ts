@@ -2,24 +2,14 @@
 //   npm run feedback            ratings per challenge and the latest messages
 //   npm run feedback -- 100     show the latest 100 messages
 // Uses wrangler, logged in to the Cloudflare account (npx wrangler login).
-import { execFileSync, execSync } from "node:child_process";
+// How far people get: npm run stats.
+import { hasTable, query } from "./lib/d1.ts";
 
-const DATABASE = "learnbash-feedback";
 const limit = Math.max(1, Math.trunc(Number(process.argv[2] ?? 30)) || 30);
 
-/** Extra wrangler arguments, e.g. FEEDBACK_WRANGLER_ARGS="--local --config x.toml" to try it locally. */
-const where = process.env.FEEDBACK_WRANGLER_ARGS?.split(" ").filter(Boolean) ?? ["--remote"];
-
-function query(sql: string): Array<Record<string, string | number | null>> {
-  // On Windows npx is a .cmd script, which only runs through the shell: quote
-  // arguments with spaces for it (the SQL here has no double quotes).
-  const windows = process.platform === "win32";
-  const args = ["--yes", "wrangler@4.147.0", "d1", "execute", DATABASE, ...where, "--json", "--command", sql.replace(/\s+/g, " ")];
-  const options = { encoding: "utf8" as const, stdio: ["ignore", "pipe", "inherit"] as Array<"ignore" | "pipe" | "inherit"> };
-  const out = windows
-    ? execSync(["npx", ...args.map((a) => (/\s/.test(a) ? `"${a}"` : a))].join(" "), options)
-    : execFileSync("npx", args, options);
-  return (JSON.parse(out) as Array<{ results: Array<Record<string, string | number | null>> }>)[0].results;
+if (!hasTable("feedback")) {
+  console.log("No feedback yet.");
+  process.exit(0);
 }
 
 console.log("Ratings per challenge:");

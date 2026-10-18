@@ -1,9 +1,10 @@
-// The feedback endpoint (src/feedback/server.ts), with SQLite standing in for
-// Cloudflare D1 (both are SQLite, so the SQL is tested as it runs there).
+// The feedback and usage endpoints (src/feedback/server.ts), with SQLite
+// standing in for Cloudflare D1 (both are SQLite, so the SQL is tested as it
+// runs there).
 import { DatabaseSync } from "node:sqlite";
 import { expect, test } from "vitest";
 import { FEEDBACK_LIMITS } from "../src/feedback/feedback.ts";
-import { handleFeedback, type D1Like } from "../src/feedback/server.ts";
+import { handleFeedback, handleUsage, type D1Like } from "../src/feedback/server.ts";
 
 function fakeD1() {
   const sqlite = new DatabaseSync(":memory:");
@@ -20,14 +21,15 @@ function fakeD1() {
     }),
   };
   const rows = () => sqlite.prepare("SELECT * FROM feedback ORDER BY id").all() as Array<Record<string, unknown>>;
-  return { db, rows };
+  const counts = () => sqlite.prepare("SELECT * FROM usage ORDER BY day, challenge, event, device").all() as Array<Record<string, unknown>>;
+  return { db, rows, counts };
 }
 
 const ORIGIN = "https://learnbash.dev";
 const NOW = new Date("2026-10-18T12:00:00Z");
 
-function post(body: unknown, { origin = ORIGIN, ip = "203.0.113.7" } = {}) {
-  return new Request(`${ORIGIN}/api/feedback`, {
+function post(body: unknown, { origin = ORIGIN, ip = "203.0.113.7", path = "/api/feedback" } = {}) {
+  return new Request(`${ORIGIN}${path}`, {
     method: "POST",
     headers: { "Content-Type": "application/json", Origin: origin, "CF-Connecting-IP": ip },
     body: typeof body === "string" ? body : JSON.stringify(body),
@@ -93,4 +95,27 @@ test("limits how much one sender can send per day", async () => {
 
 test("says so when the database isn't set up", async () => {
   expect((await handleFeedback(post(problem), {}, NOW)).status).toBe(503);
+});
+
+test("usage: only counts, per day, challenge, event and device", async () => {
+  const { db, counts } = fakeD1();
+  const send = (body: unknown, now = NOW) => handleUsage(post(body, { path: "/api/usage" }), { FEEDBACK_DB: db }, now).then((r) => r.status);
+  const opened = { challenge: "look-around", event: "opened", device: "phone" };
+  expect(await send(opened)).toBe(204);
+  expect(await send(opened)).toBe(204);
+  expect(await send({ ...opened, device: "computer" })).toBe(204);
+  expect(await send({ ...opened, event: "solved" })).toBe(204);
+  expect(await send(opened, new Date("2026-10-19T08:00:00Z"))).toBe(204);
+  expect(counts()).toEqual([
+    { day: "2026-10-18", challenge: "look-around", event: "opened", device: "computer", count: 1 },
+    { day: "2026-10-18", challenge: "look-around", event: "opened", device: "phone", count: 2 },
+    { day: "2026-10-18", challenge: "look-around", event: "solved", device: "phone", count: 1 },
+    { day: "2026-10-19", challenge: "look-around", event: "opened", device: "phone", count: 1 },
+  ]);
+
+  expect(await send({ ...opened, event: "clicked-ad" })).toBe(400);
+  expect(await send({ ...opened, device: "tablet" })).toBe(400);
+  expect(await send({ ...opened, challenge: "Look Around" })).toBe(400);
+  expect((await handleUsage(post(opened, { path: "/api/usage", origin: "https://evil.example" }), { FEEDBACK_DB: db }, NOW)).status).toBe(403);
+  expect(counts()).toHaveLength(4);
 });

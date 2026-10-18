@@ -192,3 +192,39 @@ test("feedback: says so when sending fails", async ({ page }) => {
   await expect(page.locator("#report-status")).toHaveText("Sorry, that didn't work. Please try again later.");
   await expect(page.locator("#report-form")).toBeVisible();
 });
+
+test("usage: the page reports anonymous counts of what happens", async ({ page }) => {
+  // Watched, not intercepted: intercepting requests in WebKit stalls the VM's
+  // own downloads. (The preview server has no /api, so they get a 404.)
+  const events: string[] = [];
+  page.on("request", (request) => {
+    if (new URL(request.url()).pathname !== "/api/usage") return;
+    const body = request.postDataJSON();
+    expect(Object.keys(body).sort()).toEqual(["challenge", "device", "event"]); // nothing else
+    events.push(`${body.challenge} ${body.event} ${body.device}`);
+  });
+  await openChallenge(page, "look-around");
+  await page.getByRole("button", { name: /Show a hint/ }).click();
+  const answer = page.getByLabel("Name of the file");
+  await answer.fill("projects");
+  await page.getByRole("button", { name: "Check" }).click();
+  await expect(feedback(page)).toHaveClass(/fail/);
+  await answer.fill("todo-for-new-hire.txt");
+  await page.getByRole("button", { name: "Check" }).click();
+  await expect(feedback(page)).toHaveClass(/pass/);
+  await page.getByRole("button", { name: "Check" }).click(); // solved before: not counted again
+  await expect(feedback(page)).toHaveClass(/pass/);
+  await page.getByRole("button", { name: "Reset" }).click();
+  await page.getByRole("button", { name: "Click again to start over" }).click();
+  await expect.poll(() => events.length).toBe(8);
+  expect(events).toEqual([
+    "look-around opened computer",
+    "look-around started computer",
+    "look-around hint-1 computer",
+    "look-around checked computer",
+    "look-around checked computer",
+    "look-around solved computer",
+    "look-around checked computer",
+    "look-around reset computer",
+  ]);
+});

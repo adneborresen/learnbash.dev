@@ -141,7 +141,7 @@ jobs:
           name: site-${{ github.sha }}
           path: dist/
 
-      # The server code (functions/, e.g. /api/feedback) from the same commit.
+      # The server code (functions/ and the src/feedback/ code it uses) from the same commit.
       - uses: actions/checkout@v7
         if: env.CLOUDFLARE_API_TOKEN != ''
         with:
