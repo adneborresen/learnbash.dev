@@ -3,6 +3,7 @@
 import "../site/site.css";
 import "./challenge.css";
 import challenges from "virtual:challenges";
+import { PARTS } from "../content/parts.ts";
 import type { CompiledChallenge } from "../content/schema.ts";
 import { TerminalView } from "../engine/terminal-view.ts";
 import { SetupError, type VmSession } from "../engine/vm-session.ts";
@@ -150,7 +151,9 @@ function renderText(c: CompiledChallenge, prev?: CompiledChallenge, next?: Compi
   $("story").innerHTML = c.storyHtml;
   $("goal").innerHTML = c.goalHtml;
   $("explanation").innerHTML = c.explanationHtml;
-  $("position").textContent = `${index + 1} of ${challenges.length}`;
+  const part = PARTS.findIndex((p) => p.id === c.module);
+  const inPart = challenges.filter((o) => o.module === c.module);
+  $("position").textContent = `Part ${part + 1} · ${inPart.indexOf(c) + 1} of ${inPart.length}`;
   for (const [linkId, target] of [["prev", prev], ["next", next]] as const) {
     if (!target) continue;
     const a = $<HTMLAnchorElement>(linkId);

@@ -4,7 +4,7 @@ Each challenge is one folder in `challenges/`. Adding a folder is all it takes: 
 
 ```
 challenges/
-  03-read-the-memo/
+  06-read-the-memo/
     challenge.md      metadata + the text learners read
     setup.sh          prepares the VM (runs as root before the learner gets the prompt)
     check.sh          decides pass/fail (runs as root when the learner presses Check)
@@ -17,8 +17,9 @@ challenges/
       outdated-password.answer
 ```
 
-The folder name is `NN-id`: `NN` is the position in the course (two digits) and `id` must match
-the `id` in the front matter.
+The folder name is `NN-id`: `NN` is the position in the course (two digits; gaps are fine) and
+`id` must match the `id` in the front matter. A part's challenges are numbered together. Which
+challenge goes where is planned in [curriculum.md](curriculum.md).
 
 ## challenge.md
 
@@ -26,7 +27,7 @@ the `id` in the front matter.
 ---
 id: read-the-memo
 title: Read the memo
-module: first-day
+module: find-your-way             # the part (an id from src/content/parts.ts)
 concept: Reading files            # the ONE new idea
 introduces: [cat, less]           # commands/syntax first taught here
 reuses: [cd, ls]                  # must be introduced by an earlier challenge
@@ -138,7 +139,7 @@ ignored. Don't use interactive programs (`less`, `nano`) or multi-line construct
 ```sh
 npm run check:content                                       # validate all challenges (fast)
 npm run lint                                                # shellcheck all scripts
-npx vitest run tests/challenges.test.ts -t 03-read-the-memo # prove one challenge in the VM
+npx vitest run tests/challenges.test.ts -t 06-read-the-memo # prove one challenge in the VM
 npm test                                                    # everything
 npm run todo-review                                         # list statements awaiting expert review
 ```

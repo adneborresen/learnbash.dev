@@ -1,7 +1,7 @@
 ---
 id: read-the-memo
 title: Read the memo
-module: first-day
+module: find-your-way
 concept: Reading files
 introduces: [cat, less]
 reuses: [ls]

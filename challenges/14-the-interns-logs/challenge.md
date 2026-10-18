@@ -1,7 +1,7 @@
 ---
 id: the-interns-logs
 title: The intern's 300 logs
-module: first-day
+module: find-your-way
 concept: Wildcards match many files at once
 introduces: ["*", "?"]
 reuses: [mv, mkdir, ls, cd]

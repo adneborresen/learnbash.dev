@@ -1,7 +1,7 @@
 ---
 id: look-around
 title: Look around
-module: first-day
+module: find-your-way
 concept: Where am I, and what is here?
 introduces: [prompt, pwd, ls]
 reuses: []

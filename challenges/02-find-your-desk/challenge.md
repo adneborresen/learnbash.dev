@@ -1,7 +1,7 @@
 ---
 id: find-your-desk
 title: Find your desk
-module: first-day
+module: find-your-way
 concept: Moving between directories
 introduces: [cd, absolute path, relative path, "..", "~"]
 reuses: [pwd, ls]

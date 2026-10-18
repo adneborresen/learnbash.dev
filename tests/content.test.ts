@@ -1,9 +1,10 @@
-// Content tooling that needs no VM: the TODO-REVIEW scanner (npm run todo-review).
+// Content tooling that needs no VM: the TODO-REVIEW scanner (npm run todo-review)
+// and the course-level checks of the challenge loader.
 import fs from "node:fs";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, expect, test } from "vitest";
-import { findTodoReviews } from "../scripts/lib/challenges.ts";
+import { findTodoReviews, loadChallenges } from "../scripts/lib/challenges.ts";
 
 // Built at runtime so this file doesn't show up in the real scan.
 const M = ["TODO", "REVIEW"].join("-");
@@ -30,5 +31,32 @@ test("finds markers in content, docs, code and config, and nowhere else", () => 
     "image/Dockerfile:2",
     "public/_headers:1",
     "scripts/a.ts:1",
+  ]);
+});
+
+function challenge(dir: string, folder: string, part: string) {
+  const id = folder.slice(3);
+  const sections = ["Story", "Goal", "Hint 1", "Hint 2", "Hint 3", "Explanation"].map((s) => `## ${s}\nText.\n`).join("\n");
+  write(`${dir}/${folder}/challenge.md`, `---\nid: ${id}\ntitle: Title of ${id}\nmodule: ${part}\nconcept: Something\nintroduces: [${id}]\ncheck: state\n---\n\n${sections}`);
+  for (const f of ["setup.sh", "check.sh", "solution.sh", "wrong/nothing.sh"]) write(`${dir}/${folder}/${f}`, "true\n");
+}
+
+test("a part's challenges are numbered together, in the order of the parts", () => {
+  challenge("ok", "01-a", "find-your-way");
+  challenge("ok", "05-b", "find-your-way");
+  challenge("ok", "07-c", "incident");
+  expect(loadChallenges(path.join(root, "ok")).errors).toEqual([]);
+
+  challenge("split", "01-a", "find-your-way");
+  challenge("split", "02-b", "incident");
+  challenge("split", "03-c", "find-your-way");
+  expect(loadChallenges(path.join(root, "split")).errors).toEqual([
+    'challenges/03-c: part "find-your-way" continues after challenges of another part; number a part\'s challenges together',
+  ]);
+
+  challenge("swapped", "01-a", "incident");
+  challenge("swapped", "02-b", "find-your-way");
+  expect(loadChallenges(path.join(root, "swapped")).errors).toEqual([
+    'challenges/02-b: part "find-your-way" comes before "incident" in src/content/parts.ts, so its challenges must be numbered first',
   ]);
 });

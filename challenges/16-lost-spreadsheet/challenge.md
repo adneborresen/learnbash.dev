@@ -1,7 +1,7 @@
 ---
 id: lost-spreadsheet
 title: The lost spreadsheet
-module: first-day
+module: incident
 concept: Finding files by name
 introduces: [find, quoting]
 reuses: [cp, "*", cd]

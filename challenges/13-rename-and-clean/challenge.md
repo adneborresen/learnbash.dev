@@ -1,7 +1,7 @@
 ---
 id: rename-and-clean
 title: Rename and clean up
-module: first-day
+module: find-your-way
 concept: Renaming, moving and deleting files
 introduces: [mv, rm]
 reuses: [ls, cd]

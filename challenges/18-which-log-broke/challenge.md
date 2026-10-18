@@ -1,7 +1,7 @@
 ---
 id: which-log-broke
 title: Which log broke?
-module: first-day
+module: incident
 concept: Searching inside files
 introduces: [grep, "grep -l", "grep -r"]
 reuses: [cd, "*"]

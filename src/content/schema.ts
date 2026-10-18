@@ -1,6 +1,7 @@
 // The challenge format: front matter of challenges/NN-slug/challenge.md and
 // the compiled form the website receives. See docs/authoring.md.
 import { z } from "zod";
+import { PARTS } from "./parts.ts";
 
 const slug = z.string().regex(/^[a-z0-9]+(-[a-z0-9]+)*$/, "use lowercase letters, digits and dashes");
 
@@ -8,7 +9,8 @@ export const challengeMetaSchema = z
   .object({
     id: slug,
     title: z.string().min(3).max(60),
-    module: slug,
+    /** The part of the course (an id from parts.ts). */
+    module: z.enum(PARTS.map((p) => p.id) as [string, ...string[]]),
     /** The single new idea this challenge teaches (shown to learners). */
     concept: z.string().min(3).max(80),
     /** Commands/syntax first introduced here. Later challenges may reuse them. */

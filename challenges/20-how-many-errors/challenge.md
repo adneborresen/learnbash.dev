@@ -1,7 +1,7 @@
 ---
 id: how-many-errors
 title: How many errors?
-module: first-day
+module: incident
 concept: Connecting commands with a pipe
 introduces: ["|", wc]
 reuses: [grep]

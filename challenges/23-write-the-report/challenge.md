@@ -1,7 +1,7 @@
 ---
 id: write-the-report
 title: Write the report
-module: first-day
+module: incident
 concept: Saving output to a file
 introduces: [">", ">>", echo]
 reuses: [grep, cat]

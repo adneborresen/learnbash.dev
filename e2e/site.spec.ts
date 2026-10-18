@@ -4,7 +4,10 @@ import { expect, test } from "@playwright/test";
 test("landing page lists the course and continues where you left off", async ({ page }) => {
   await page.goto("/");
   await expect(page.getByRole("heading", { level: 1 })).toHaveText("Learn Bash in a real Linux terminal");
-  const items = page.locator("#list li");
+  const parts = page.locator("#parts .part");
+  await expect(parts).toHaveCount(2);
+  await expect(parts.first().locator("h3")).toHaveText("Part 1: Find your way and work with files");
+  const items = page.locator("#parts li");
   await expect(items).toHaveCount(12);
   await expect(page.getByRole("link", { name: "Start the first challenge →" })).toHaveAttribute("href", "/challenges/look-around/");
 
@@ -13,6 +16,7 @@ test("landing page lists the course and continues where you left off", async ({ 
   );
   await page.reload();
   await expect(page.getByText("You've solved 1 of 12.")).toBeVisible();
+  await expect(parts.first()).toContainText("1 of 6 solved.");
   await expect(page.locator("#start")).toHaveText("Continue: Find your desk →");
   await expect(items.first()).toHaveClass(/solved/);
 });

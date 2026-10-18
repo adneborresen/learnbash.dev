@@ -1,7 +1,7 @@
 ---
 id: permission-denied
 title: Permission denied
-module: first-day
+module: incident
 concept: File permissions and running scripts
 introduces: [permissions, "ls -l", chmod, "./"]
 reuses: [ls]

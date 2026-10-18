@@ -1,7 +1,7 @@
 ---
 id: make-a-backup
 title: Make a backup
-module: first-day
+module: find-your-way
 concept: Creating directories and copying files
 introduces: [mkdir, cp]
 reuses: [ls, cd]

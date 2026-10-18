@@ -1,7 +1,7 @@
 ---
 id: top-visitor
 title: Top visitor
-module: first-day
+module: incident
 concept: Sorting and counting lines
 introduces: [sort, uniq, head]
 reuses: ["|"]

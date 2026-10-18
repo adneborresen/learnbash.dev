@@ -10,6 +10,7 @@ import {
   type ChallengeMeta,
   type CompiledChallenge,
 } from "../../src/content/schema.ts";
+import { PARTS } from "../../src/content/parts.ts";
 import { ROOT } from "./paths.ts";
 
 export const CHALLENGES_DIR = path.join(ROOT, "challenges");
@@ -176,6 +177,19 @@ export function loadChallenges(dir = CHALLENGES_DIR): LoadResult {
     orders.set(order, folder);
     const c = loadOne(path.join(dir, folder), folder, order, errors);
     if (c) challenges.push(c);
+  }
+
+  // A part's challenges are numbered together, and parts follow each other
+  // in the order of parts.ts.
+  const partOrder = PARTS.map((p) => p.id as string);
+  for (const [i, c] of challenges.entries()) {
+    const prev = challenges[i - 1];
+    if (!prev || prev.meta.module === c.meta.module) continue;
+    if (challenges.slice(0, i).some((p) => p.meta.module === c.meta.module)) {
+      errors.push(`challenges/${c.folder}: part "${c.meta.module}" continues after challenges of another part; number a part's challenges together`);
+    } else if (partOrder.indexOf(c.meta.module) < partOrder.indexOf(prev.meta.module)) {
+      errors.push(`challenges/${c.folder}: part "${c.meta.module}" comes before "${prev.meta.module}" in src/content/parts.ts, so its challenges must be numbered first`);
+    }
   }
 
   // Course-level checks: ids are unique, and a challenge only reuses

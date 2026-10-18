@@ -25,6 +25,7 @@
 .steps p { margin: 0; color: var(--muted); }
 
 .course .muted { margin-top: -6px; }
+.part h3 { font-size: 1.1rem; margin: 26px 0 10px; }
 .challenge-list { list-style: none; padding: 0; margin: 14px 0; counter-reset: c;
   background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); }
 .challenge-list li { counter-increment: c; display: flex; align-items: center; gap: 12px; padding: 0 14px; }
