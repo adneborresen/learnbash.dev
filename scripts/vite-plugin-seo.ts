@@ -3,10 +3,14 @@
 //   learnbash.pages.dev) and Open Graph tags, so a shared link shows a title,
 //   a summary and a picture. Challenge pages get theirs from the challenges
 //   plugin, which writes them after the build (withHeadTags below).
+// - The home page names the site for search engines (schema.org WebSite), so
+//   results can show "learnbash.dev" as the site name.
 // - The build writes sitemap.xml with every page and robots.txt pointing to it.
 import type { Plugin } from "vite";
 import { challengeUrl, HOME_URL, LICENSES_URL, PRIVACY_URL, SITE_ORIGIN } from "../src/site/routes.ts";
 import { loadChallenges } from "./lib/challenges.ts";
+
+export const SITE_NAME = "learnbash.dev";
 
 /** Made by scripts/make-icons.ts. */
 export const OG_IMAGE = { path: "/og-image.png", width: 1200, height: 630 };
@@ -29,7 +33,7 @@ export function withHeadTags(html: string, url: string): string {
   const tags = [
     `<link rel="canonical" href="${SITE_ORIGIN}${url}">`,
     `<meta property="og:type" content="website">`,
-    `<meta property="og:site_name" content="learnbash.dev">`,
+    `<meta property="og:site_name" content="${SITE_NAME}">`,
     `<meta property="og:title" content="${title}">`,
     `<meta property="og:description" content="${description}">`,
     `<meta property="og:url" content="${SITE_ORIGIN}${url}">`,
@@ -39,6 +43,10 @@ export function withHeadTags(html: string, url: string): string {
     `<meta property="og:image:alt" content="A terminal running grep: learn Bash in a real Linux terminal, in your browser.">`,
     `<meta name="twitter:card" content="summary_large_image">`,
   ];
+  if (url === HOME_URL) {
+    const site = { "@context": "https://schema.org", "@type": "WebSite", name: SITE_NAME, url: `${SITE_ORIGIN}${HOME_URL}` };
+    tags.push(`<script type="application/ld+json">${JSON.stringify(site)}</script>`);
+  }
   return html.replace("</head>", () => tags.map((t) => `  ${t}\n`).join("") + "</head>");
 }
 

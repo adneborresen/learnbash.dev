@@ -1,4 +1,5 @@
-// Generates public/favicon.ico and public/apple-touch-icon.png from
+// Generates public/favicon.ico, public/icon-192.png (a larger icon, e.g. for
+// search results) and public/apple-touch-icon.png from
 // public/favicon.svg (the one source of the design), and public/og-image.png,
 // the picture shown when a link to the site is shared. Run after changing the
 // SVG or the preview design: node scripts/make-icons.ts
@@ -72,7 +73,8 @@ async function renderPreview(): Promise<Buffer> {
 }
 
 fs.writeFileSync(path.join(ROOT, "public/favicon.ico"), ico(await render(32, false), 32));
+fs.writeFileSync(path.join(ROOT, "public/icon-192.png"), await render(192, false));
 fs.writeFileSync(path.join(ROOT, "public/apple-touch-icon.png"), await render(180, true));
 fs.writeFileSync(path.join(ROOT, `public${OG_IMAGE.path}`), await renderPreview());
 await browser.close();
-console.log(`wrote public/favicon.ico, public/apple-touch-icon.png and public${OG_IMAGE.path}`);
+console.log(`wrote public/favicon.ico, public/icon-192.png, public/apple-touch-icon.png and public${OG_IMAGE.path}`);

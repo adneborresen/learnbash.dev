@@ -44,9 +44,15 @@ test("every page links icons that exist", async ({ page, request }) => {
     const hrefs = await page.locator('link[rel="icon"], link[rel="apple-touch-icon"]').evaluateAll((links) =>
       links.map((l) => l.getAttribute("href")!),
     );
-    expect(hrefs).toEqual(["/favicon.svg", "/favicon.ico", "/apple-touch-icon.png"]);
+    expect(hrefs).toEqual(["/favicon.svg", "/favicon.ico", "/icon-192.png", "/apple-touch-icon.png"]);
     for (const href of hrefs) expect((await request.get(href)).ok(), href).toBe(true);
   }
+});
+
+test("the home page names the site for search engines", async ({ page }) => {
+  await page.goto("/");
+  const data = JSON.parse((await page.locator('script[type="application/ld+json"]').textContent())!);
+  expect(data).toEqual({ "@context": "https://schema.org", "@type": "WebSite", name: "learnbash.dev", url: "https://learnbash.dev/" });
 });
 
 test("licenses page lists the Linux packages and links to their source code", async ({ page }) => {
