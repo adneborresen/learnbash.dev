@@ -44,8 +44,8 @@ Run `cd reports` (unless you're in it already), then
 - **Move into a directory:** `mv q3-report.txt archive/` (the name stays the same)
 
 or both at once: `mv q3-report.txt archive/2026-q3.txt`. Unlike `cp`, the original
-is gone afterwards. Like `cp`, `mv` by default **overwrites** a file that already has
-the new name, without asking; `mv -i` asks first.
+is gone afterwards. `mv` normally **replaces** a file that already has
+the new name. Use `mv -i` to be asked before anything is overwritten.
 
 Renaming a file within the same folder with `mv` is safer than copying and deleting:
 the file just gets a new name, so there's never a second version and nothing to forget

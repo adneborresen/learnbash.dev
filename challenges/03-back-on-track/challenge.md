@@ -61,8 +61,9 @@ A few more ways to get somewhere without retracing your steps:
 | `.` | the current directory |
 
 A path that doesn't start with `/`, like `website/src`, is **relative**: it's followed
-from the directory you're in now. A `~` at the start is replaced by Bash with your home
-directory before the command runs, so `~/projects` means `/home/learner/projects`.
+from the directory you're in now. A `~` on its own or before a `/`, without quotes
+around it, is replaced by Bash with your home directory before the command runs, so
+`~/projects` means `/home/learner/projects`.
 
 Two shortcuts: `cd` on its own takes you home, and `cd -` jumps back to the directory you
 were in before (it prints where it took you).
