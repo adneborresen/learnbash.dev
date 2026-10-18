@@ -19,6 +19,7 @@ npm run build:vm    # build kernel + root filesystem, boot once, save the VM sna
 npm test            # boot the snapshot: environment, engine and every challenge
 npm run check:content  # validate challenge files
 npm run todo-review    # list statements marked for expert review
+npm run feedback       # learner feedback from the live site (needs wrangler login)
 npm run lint        # shellcheck all guest scripts
 npm run typecheck
 npm run dev         # site at http://localhost:5173/ (engine playground: /dev/engine.html)
@@ -45,6 +46,8 @@ Build outputs land in `build/`: `build/image/` (kernel, initramfs, `packages.txt
   the pages. The build writes one `challenges/<id>/index.html` per challenge from
   `challenge.html`. The licenses page is generated from the image's package list.
 - `public/_headers` – caching and security headers (Cloudflare Pages format).
+- `functions/` – server code (Cloudflare Pages Functions): `/api/feedback` saves learner
+  feedback (`src/feedback/`) in a Cloudflare D1 database bound as `FEEDBACK_DB`.
 - `src/site/` – shared styles, URLs and progress (saved in the browser's localStorage).
 - `dev/` – developer pages (engine playground).
 - `docs/spike-results.md` – measurements from the M0 prototype.

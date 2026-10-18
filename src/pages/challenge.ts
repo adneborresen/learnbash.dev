@@ -6,6 +6,7 @@ import challenges from "virtual:challenges";
 import { PARTS } from "../content/parts.ts";
 import type { CompiledChallenge } from "../content/schema.ts";
 import { TerminalView } from "../engine/terminal-view.ts";
+import { setUpFeedback } from "./feedback-form.ts";
 import { SetupError, type VmSession } from "../engine/vm-session.ts";
 import { ProgressStore } from "../site/progress.ts";
 import { challengeIdFromPath, challengeUrl, HOME_URL } from "../site/routes.ts";
@@ -28,6 +29,8 @@ if (index < 0) {
 async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next?: CompiledChallenge) {
   renderText(c, prev, next);
   setUpHints(c);
+  let lastCheck = "";
+  setUpFeedback(c.id, () => ({ hints: progress.hintsShown(c.id), lastCheck }));
   if (progress.isSolved(c.id)) showSolved(false);
 
   const view = new TerminalView($("term"));
@@ -47,6 +50,7 @@ async function runChallenge(c: CompiledChallenge, prev?: CompiledChallenge, next
     const el = $("feedback");
     el.textContent = text;
     el.className = `feedback ${kind}`.trim();
+    if (kind) lastCheck = text;
   };
 
   function showSolved(justNow: boolean) {

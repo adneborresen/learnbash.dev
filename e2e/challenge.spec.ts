@@ -143,3 +143,52 @@ test.describe("on a phone", () => {
     expect(await screenText(page)).toContain("Usage: ls");
   });
 });
+
+test("feedback: report a problem, and rate a solved challenge", async ({ page }) => {
+  const sent: Array<Record<string, unknown>> = [];
+  await page.route("/api/feedback", async (route) => {
+    sent.push(route.request().postDataJSON());
+    await route.fulfill({ status: 204 });
+  });
+  await page.addInitScript(() =>
+    localStorage.setItem(
+      "learnbash:progress:v1",
+      JSON.stringify({ solved: { "look-around": "2026-01-01T00:00:00Z" }, hints: { "look-around": 2 } }),
+    ),
+  );
+  await page.goto("/challenges/look-around/");
+
+  // While working on it.
+  await page.getByText("Something wrong or confusing?").click();
+  await page.getByLabel("What happened? What did you expect?").fill("The hint mentions a folder I don't have.");
+  await page.locator("#report-form").getByRole("button", { name: "Send" }).click();
+  await expect(page.locator("#report-status")).toHaveText("Thanks! Your feedback was sent.");
+  await expect(page.locator("#report-form")).toBeHidden();
+  expect(sent[0]).toEqual({
+    challenge: "look-around",
+    kind: "problem",
+    comment: "The hint mentions a folder I don't have.",
+    hints: 2,
+    device: "computer",
+    website: "",
+  });
+
+  // After solving: one tap sends the rating, a comment can follow.
+  await page.getByRole("button", { name: "Not good" }).click();
+  await expect(page.locator("#rate-status")).toHaveText("Thanks! Your feedback was sent.");
+  expect(sent[1]).toMatchObject({ challenge: "look-around", kind: "rating", rating: "down" });
+  await page.getByLabel("Anything to add? (optional)").fill("Too easy.");
+  await page.locator("#rate-form").getByRole("button", { name: "Send" }).click();
+  await expect.poll(() => sent.length).toBe(3);
+  expect(sent[2]).toMatchObject({ kind: "comment", rating: "down", comment: "Too easy." });
+});
+
+test("feedback: says so when sending fails", async ({ page }) => {
+  await page.route("/api/feedback", (route) => route.fulfill({ status: 503 }));
+  await page.goto("/challenges/look-around/");
+  await page.getByText("Something wrong or confusing?").click();
+  await page.getByLabel("What happened? What did you expect?").fill("Something broke.");
+  await page.locator("#report-form").getByRole("button", { name: "Send" }).click();
+  await expect(page.locator("#report-status")).toHaveText("Sorry, that didn't work. Please try again later.");
+  await expect(page.locator("#report-form")).toBeVisible();
+});

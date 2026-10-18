@@ -60,6 +60,20 @@
       <summary>What you learned</summary>
       <div class="prose" id="explanation"></div>
     </details>
+    <div class="rate" id="rate">
+      <p class="rate-question">How was this challenge?</p>
+      <div class="buttons">
+        <button type="button" data-rating="up" aria-pressed="false" aria-label="Good">👍</button>
+        <button type="button" data-rating="down" aria-pressed="false" aria-label="Not good">👎</button>
+      </div>
+      <form class="feedback-form" id="rate-form" hidden>
+        <label for="rate-comment">Anything to add? (optional)</label>
+        <textarea id="rate-comment" rows="3"></textarea>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit">Send</button>
+      </form>
+      <p class="feedback-status" id="rate-status" role="status"></p>
+    </div>
     <a class="button primary" id="solved-next" href="/">Next challenge →</a>
   </section>
 
@@ -67,6 +81,19 @@
     <h2 id="hints-title">Stuck?</h2>
     <ol id="hint-list"></ol>
     <button type="button" id="hint-button">Show a hint</button>
+    <details class="report">
+      <summary>Something wrong or confusing?</summary>
+      <form class="feedback-form" id="report-form">
+        <label for="report-text">What happened? What did you expect?</label>
+        <textarea id="report-text" rows="4"></textarea>
+        <input class="hp" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <p class="feedback-note">Sent along with it: this challenge, how many hints you opened, your last
+          Check result and whether you're on a phone or a computer. Nothing else. Add your email if
+          you'd like a reply.</p>
+        <button type="submit">Send</button>
+      </form>
+      <p class="feedback-status" id="report-status" role="status"></p>
+    </details>
   </section>
 </main>
 

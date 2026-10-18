@@ -16,6 +16,7 @@
     "build": "npm run stage:vm && vite build",
     "check:content": "node scripts/check-content.ts",
     "todo-review": "node scripts/check-content.ts --todo",
+    "feedback": "node scripts/feedback.ts",
     "test:e2e": "npm run build && playwright test"
   },
   "dependencies": {

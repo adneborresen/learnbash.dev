@@ -56,6 +56,24 @@
 .hints ol { margin: 6px 0 10px; padding-left: 1.4em; }
 .hints li { margin-bottom: 8px; }
 
+.rate { margin-bottom: 14px; }
+.rate-question { margin: 0 0 6px; font-weight: 600; }
+.rate [data-rating] { font-size: 1.2rem; min-width: 48px; }
+.rate [aria-pressed="true"] { border-color: var(--accent); }
+.report { margin-top: 16px; }
+.report summary { cursor: pointer; color: var(--muted); }
+.feedback-form { display: flex; flex-direction: column; align-items: flex-start; gap: 6px; margin-top: 8px; }
+.feedback-form label { font-weight: 600; font-size: 0.95rem; }
+.feedback-form textarea {
+  width: 100%; box-sizing: border-box; font: inherit; padding: 8px 10px; border-radius: var(--radius);
+  border: 1px solid var(--border); background: var(--surface); color: var(--text);
+}
+.feedback-note { margin: 0; color: var(--muted); font-size: 0.85rem; }
+.feedback-status { margin: 6px 0 0; }
+.feedback-status:empty { display: none; }
+/* Hidden from people; bots that fill in every field give themselves away. */
+.hp { position: absolute; left: -10000px; width: 1px; height: 1px; opacity: 0; }
+
 .not-found { max-width: 640px; margin: 40px auto; padding: 0 16px; }
 
 @media (min-width: 900px) {

@@ -141,6 +141,19 @@ jobs:
           name: site-${{ github.sha }}
           path: dist/
 
+      # The server code (functions/, e.g. /api/feedback) from the same commit.
+      - uses: actions/checkout@v7
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        with:
+          sparse-checkout: |
+            functions
+            src/feedback
+          path: repo
+
+      - name: Add the server code
+        if: env.CLOUDFLARE_API_TOKEN != ''
+        run: cp -r repo/functions repo/src .
+
       - name: Upload to Cloudflare Pages
         if: env.CLOUDFLARE_API_TOKEN != ''
         run: |

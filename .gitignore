@@ -9,3 +9,4 @@ playwright-report/
 test-results/
 docs/deploy.md
 docs/ideas.md
+.wrangler/
