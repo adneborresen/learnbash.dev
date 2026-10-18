@@ -1,7 +1,7 @@
 // Every challenge is proven against the real VM before it can be published:
 //   1. the untouched starting state does NOT pass the checker,
 //   2. the reference solution, typed into the learner's shell, passes,
-//   3. every common wrong attempt in wrong/ fails,
+//   3. alternative solutions in accepted/ pass and attempts in wrong/ fail,
 //   4. setup is deterministic (same files every time).
 // Run one challenge:  npx vitest run tests/challenges.test.ts -t 01-look-around
 import { afterAll, beforeAll, describe, expect, test } from "vitest";
@@ -65,14 +65,16 @@ for (const c of challenges) {
       });
     }
 
-    for (const w of c.wrong) {
-      test(`wrong attempt "${w.name}" fails`, async () => {
-        await start(c);
-        await typeAll(w.commands);
-        const r = await node.session.check(c.check, w.answer ?? "");
-        expect(r.passed, `checker accepted a wrong attempt: ${r.output}`).toBe(false);
-        expect(r.message.trim(), "a failing check should tell the learner why").not.toBe("");
-      });
+    for (const [kind, attempts, expected] of [["accepted", c.accepted, true], ["wrong", c.wrong, false]] as const) {
+      for (const attempt of attempts) {
+        test(`${kind} attempt "${attempt.name}" ${expected ? "passes" : "fails"}`, async () => {
+          await start(c);
+          await typeAll(attempt.commands);
+          const r = await node.session.check(c.check, attempt.answer ?? "");
+          expect(r.passed, `checker misclassified ${kind} attempt: ${r.output}`).toBe(expected);
+          expect(r.message.trim(), "the checker should give feedback").not.toBe("");
+        });
+      }
     }
 
     test("setup is deterministic", async () => {

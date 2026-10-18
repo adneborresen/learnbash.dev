@@ -6,4 +6,6 @@ printf 'Q3 REPORT (FINAL VERSION)\nRevenue grew 12%% this quarter.\n' > reports/
 printf 'Q3 REPORT (DRAFT, do not send)\nRevenue grew ??%% this quarter.\n' > reports/report_draft.txt
 printf 'month,amount\njuly,1200\naugust,1350\nseptember,1410\n' > reports/budget.csv
 printf 'temporary data\n' > reports/junk.tmp
+mkdir -p /run/learnbash/expected
+cp reports/*.txt reports/budget.csv /run/learnbash/expected/
 fix_owner

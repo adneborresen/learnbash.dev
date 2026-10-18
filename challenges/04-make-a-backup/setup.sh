@@ -5,4 +5,6 @@ mkdir -p config projects/website
 printf 'server {\n    listen 80;\n    server_name example.com;\n    root /var/www/website;\n}\n' > config/nginx.conf
 printf 'APP_NAME=website\nAPP_PORT=8080\nLOG_LEVEL=info\n' > config/app.conf
 printf '# Notes about the configs. Not needed in the backup.\n' > config/README.txt
+mkdir -p /run/learnbash/expected
+cp config/*.conf /run/learnbash/expected/
 fix_owner

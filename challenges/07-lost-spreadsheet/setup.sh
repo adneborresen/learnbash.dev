@@ -10,4 +10,6 @@ printf 'quarter,revenue\nq1,310000\n' > documents/finance/2024/q1/revenue.csv
 printf 'name,role\nAda,engineer\n' > documents/hr/contracts/staff.csv
 printf 'Spring sale: 20%% off.\n' > documents/marketing/campaigns/spring.txt
 printf 'name,phone\nreception,555-0100\n' > contacts.csv
+mkdir -p /run/learnbash/expected
+cp documents/finance/2024/q4/budget_2024.csv /run/learnbash/expected/
 fix_owner

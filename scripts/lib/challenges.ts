@@ -16,12 +16,12 @@ export const CHALLENGES_DIR = path.join(ROOT, "challenges");
 const FOLDER = /^(\d{2})-([a-z0-9]+(?:-[a-z0-9]+)*)$/;
 const HTML_COMMENT = /<!--[\s\S]*?-->/g;
 
-/** A wrong attempt that the checker must reject. */
-export interface WrongCase {
+/** A learner attempt that the checker must accept or reject. */
+export interface AttemptCase {
   name: string;
-  /** Command lines typed into the learner's shell (from wrong/NAME.sh). */
+  /** Command lines typed into the learner's shell. */
   commands: string[];
-  /** Answer typed into the answer box (from wrong/NAME.answer). */
+  /** Answer typed into the answer box. */
   answer?: string;
 }
 
@@ -36,7 +36,8 @@ export interface LoadedChallenge {
   check: string;
   /** Reference solution: command lines typed into the learner's shell. */
   solution: string[];
-  wrong: WrongCase[];
+  accepted: AttemptCase[];
+  wrong: AttemptCase[];
 }
 
 export interface TodoReview {
@@ -83,6 +84,27 @@ function readOptional(file: string): string | undefined {
   return fs.existsSync(file) ? fs.readFileSync(file, "utf8").replace(/\r\n/g, "\n") : undefined;
 }
 
+function loadAttempts(dir: string, where: string, kind: "accepted" | "wrong", check: ChallengeMeta["check"] | undefined, errors: string[]): AttemptCase[] {
+  const attempts: AttemptCase[] = [];
+  const caseDir = path.join(dir, kind);
+  const names = fs.existsSync(caseDir)
+    ? [...new Set(fs.readdirSync(caseDir).map((f) => f.replace(/\.(sh|answer)$/, "")))].sort()
+    : [];
+  for (const name of names) {
+    const sh = readOptional(path.join(caseDir, `${name}.sh`));
+    const answer = readOptional(path.join(caseDir, `${name}.answer`))?.trim();
+    if (sh === undefined && answer === undefined) {
+      errors.push(`${where}/${kind}/${name}: only .sh and .answer files are allowed`);
+      continue;
+    }
+    if (check === "answer" && answer === undefined) errors.push(`${where}/${kind}/${name}: answer challenges need a ${name}.answer file`);
+    if (check === "state" && answer !== undefined) errors.push(`${where}/${kind}/${name}.answer: only answer challenges take answers`);
+    if (check === "state" && commandLines(sh ?? "").length === 0) errors.push(`${where}/${kind}/${name}.sh: no commands`);
+    attempts.push({ name, commands: commandLines(sh ?? ""), answer });
+  }
+  return attempts;
+}
+
 function loadOne(dir: string, folder: string, order: number, errors: string[]): LoadedChallenge | undefined {
   const where = `challenges/${folder}`;
   const before = errors.length;
@@ -116,23 +138,8 @@ function loadOne(dir: string, folder: string, order: number, errors: string[]): 
   const solution = commandLines(files["solution.sh"] ?? "");
   if (files["solution.sh"] !== undefined && solution.length === 0) errors.push(`${where}/solution.sh: no commands`);
 
-  const wrong: WrongCase[] = [];
-  const wrongDir = path.join(dir, "wrong");
-  const names = fs.existsSync(wrongDir)
-    ? [...new Set(fs.readdirSync(wrongDir).map((f) => f.replace(/\.(sh|answer)$/, "")))].sort()
-    : [];
-  for (const name of names) {
-    const sh = readOptional(path.join(wrongDir, `${name}.sh`));
-    const answer = readOptional(path.join(wrongDir, `${name}.answer`))?.trim();
-    if (sh === undefined && answer === undefined) {
-      errors.push(`${where}/wrong/${name}: only .sh and .answer files are allowed`);
-      continue;
-    }
-    if (meta?.check === "answer" && answer === undefined) errors.push(`${where}/wrong/${name}: answer challenges need a ${name}.answer file`);
-    if (meta?.check === "state" && answer !== undefined) errors.push(`${where}/wrong/${name}.answer: only answer challenges take answers`);
-    if (meta?.check === "state" && commandLines(sh ?? "").length === 0) errors.push(`${where}/wrong/${name}.sh: no commands`);
-    wrong.push({ name, commands: commandLines(sh ?? ""), answer });
-  }
+  const accepted = loadAttempts(dir, where, "accepted", meta?.check, errors);
+  const wrong = loadAttempts(dir, where, "wrong", meta?.check, errors);
   if (wrong.length === 0) errors.push(`${where}: add at least one common wrong attempt in wrong/ (it must fail the checker)`);
 
   if (errors.length > before || !meta || !sections) return undefined;
@@ -145,6 +152,7 @@ function loadOne(dir: string, folder: string, order: number, errors: string[]): 
     setup: files["setup.sh"]!,
     check: files["check.sh"]!,
     solution,
+    accepted,
     wrong,
   };
 }

@@ -9,6 +9,9 @@ challenges/
     setup.sh          prepares the VM (runs as root before the learner gets the prompt)
     check.sh          decides pass/fail (runs as root when the learner presses Check)
     solution.sh       the reference solution, typed into the learner's shell by the tests
+    accepted/         optional alternative solutions; every one MUST pass
+      absolute-path.sh
+      absolute-path.answer
     wrong/            common wrong attempts; every one MUST fail the checker
       outdated-password.sh
       outdated-password.answer
@@ -114,7 +117,7 @@ and kind ("3 of 5 files moved", not "wrong"). Helpers from `check-lib.sh`:
 Prefer checking the **final state** (files, contents, permissions, current directory) over
 guessing which commands were typed.
 
-## solution.sh and wrong/
+## solution.sh, accepted/ and wrong/
 
 One command per line, exactly as a learner would type them. Blank lines and `#` comments are
 ignored. Don't use interactive programs (`less`, `nano`) or multi-line constructs.
@@ -122,6 +125,13 @@ ignored. Don't use interactive programs (`less`, `nano`) or multi-line construct
 - For `check: answer` challenges, the solution's terminal output must contain `expected_answer`.
 - Each wrong attempt is `wrong/NAME.sh` (commands typed) and/or `wrong/NAME.answer` (text typed into
   the answer box; required for answer challenges). Use real mistakes learners make.
+- Accepted alternatives use the same format in `accepted/`. Keep valid alternatives here,
+  especially regressions for a checker that used to reject a correct solution.
+- Answer challenges grade the answer to the supplied exercise, not the commands used to find
+  it. A correct answer obtained with another command is not a wrong attempt.
+- For state checks, keep reference contents or checksums under `/run/learnbash/expected`
+  during setup. This directory is inside the agent's root-only directory, so learner edits
+  cannot change the reference. Comparing two learner-editable files is not enough.
 
 ## Testing
 
@@ -134,7 +144,8 @@ npm run todo-review                                         # list statements aw
 ```
 
 For each challenge the tests check that the starting state fails, the reference solution passes,
-every wrong attempt fails, answers with stray spaces are accepted, and setup is deterministic.
+every accepted alternative passes, every wrong attempt fails, answers with stray spaces are
+accepted, and setup is deterministic.
 CI runs all of this; a challenge that fails can't be published.
 
 Try it in the browser with `npm run dev`: the new challenge appears in the list on the home

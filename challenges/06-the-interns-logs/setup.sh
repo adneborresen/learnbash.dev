@@ -8,4 +8,7 @@ for i in $(seq -w 1 300); do
 done
 printf 'Hourly test logs from the summer. Archive them when testing is over.\n' > README.txt
 printf '1. archive the logs\n2. write the summary\n' > todo.txt
+mkdir -p /run/learnbash/expected
+sha256sum -- *.log > /run/learnbash/expected/logs.sha256
+cp README.txt todo.txt /run/learnbash/expected/
 fix_owner

@@ -1,7 +1,25 @@
 # shellcheck shell=bash
 . /usr/local/lib/learnbash/check-lib.sh
 answer=$(answer_trimmed)
-name=${answer##*/} # accept paths like incident/web-06.log too
+name=$answer
+# Accept real paths from home or incident, not an arbitrary matching basename.
+if [[ $answer == */* ]]; then
+  case $answer in
+    '~/'*) candidates=("$LEARNER_HOME/${answer#\~/}") ;;
+    /*) candidates=("$answer") ;;
+    *) candidates=("$LEARNER_HOME/$answer" "$LEARNER_HOME/incident/$answer") ;;
+  esac
+  matched=false
+  for candidate in "${candidates[@]}"; do
+    resolved=$(realpath -e -- "$candidate" 2>/dev/null) || continue
+    if [ "$resolved" = "$LEARNER_HOME/incident/web-06.log" ]; then
+      name=web-06.log
+      matched=true
+      break
+    fi
+  done
+  $matched || fail "That path doesn't identify the matching log in ~/incident. Enter its name or actual path."
+fi
 case $name in
   web-06.log) pass "Correct! web-06 is the server that failed." ;;
   web-06) fail "Almost: include the ending too, exactly as grep shows it." ;;

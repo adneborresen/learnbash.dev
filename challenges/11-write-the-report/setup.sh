@@ -15,4 +15,8 @@ cat > logs/app.log <<'EOF'
 2026-10-17 00:03:12 ERROR certificate for shop.example.com expires in 7 days
 2026-10-17 00:10:00 INFO website running normally
 EOF
+mkdir -p /run/learnbash/expected
+grep ERROR logs/app.log | LC_ALL=C sort > /run/learnbash/expected/errors.txt
+printf 'END OF REPORT\n' > /run/learnbash/expected/end.txt
+printf 'END OF REPORT' > /run/learnbash/expected/end-no-newline.txt
 fix_owner

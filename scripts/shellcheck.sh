@@ -9,9 +9,9 @@ image_files=$(find image scripts -type f \( -name '*.sh' -o -path 'image/overlay
 # Challenge setup/check scripts source the VM's helper libraries (SC1091: not
 # available on the host).
 challenge_scripts=$(find challenges -type f \( -name setup.sh -o -name check.sh \) | sort)
-# Solutions and wrong attempts are commands a learner types one by one, so
+# Solutions and test attempts are commands a learner types one by one, so
 # script-only advice (SC2164: "cd ... || exit", SC2103: use a subshell) is off.
-typed_files=$(find challenges -type f \( -name solution.sh -o -path '*/wrong/*.sh' \) | sort)
+typed_files=$(find challenges -type f \( -name solution.sh -o -path '*/accepted/*.sh' -o -path '*/wrong/*.sh' \) | sort)
 
 run() {
   if command -v shellcheck >/dev/null 2>&1; then
